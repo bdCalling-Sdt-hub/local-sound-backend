@@ -1,0 +1,25 @@
+{
+  "name": "local-sound",
+  "version": "1.0.0",
+  "description": "// dose music have limited copy's\r // who handel the transaction part\r // can artist able to buy music\r // what happen when artist delete a music to buyer\r // when i get the user barth date, phone number, address\r // a artist can upload a music with any name?\r // if music Purchase for Offline, then why quantity\r // when user and artist get notification and how. e.g (push notification)\r // should i have to maintene the resell chine\r // who store the data of recently played music\r // is there any restriction to listen music online like only 1 time\r // when jwt token will be expire\r // where those resell music shown\r // why user buy those resell music. (not impotent)\r // what happen when a user resell there music (when user can listen offline)\r // how i sort those ads.\r // dose all api need pagination (how many data a device can handel at a api response)\r // how the payment system work.",
+  "main": "index.ts",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.10",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
