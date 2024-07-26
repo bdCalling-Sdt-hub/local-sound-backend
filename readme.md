@@ -14,8 +14,7 @@
 // why user buy those resell music. (not impotent)
 // what happen when a user resell there music (when user can listen offline)
 // how i sort those ads.
-// dose all api need pagination (how many data a device can handel at a api response)
-// how the payment system work.
+// dose all api need pagination (how many data a device can handel in a api response)
 
 
 //model

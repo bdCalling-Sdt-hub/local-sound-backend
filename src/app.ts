@@ -1,9 +1,12 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
+import { streamingMusic } from "./controllers/stream";
 
-const app: Express = express();
+const app = express();
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
   res.send("Express + TypeScript Server");
 });
+
+app.get("stream", streamingMusic);
 
 export default app;
