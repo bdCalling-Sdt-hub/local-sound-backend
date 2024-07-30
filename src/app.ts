@@ -1,17 +1,26 @@
-import express, { Request, Response,NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { streamingMusic } from "./controllers/stream";
 import { CustomError } from "./utils/error";
+import routes from "./routes";
+import responseBuilder from "./utils/responseBuilder";
 
 const app = express();
 
+app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+app.use(routes);
+
 app.use(
   (error: CustomError, _: Request, response: Response, next: NextFunction) => {
-    console.error(error);
-
     if (error.status) {
-      response.status(error.status).json({ message: error.message });
+      return response
+        .status(error.status)
+        .json(responseBuilder(false, error.status, error.message));
     } else {
-      response.status(500).json({ message: "Internal Server Error" });
+      return response
+        .status(500)
+        .json(responseBuilder(false, 500, "Internal Server Error"));
     }
   }
 );
