@@ -18,7 +18,7 @@ export function getUserValidation(request: Request): {
 
   return {
     userId,
-    tokenData: request.body.tokenData,
+    tokenData: request.tokenData,
   };
 }
 
@@ -59,7 +59,7 @@ export function updateUserValidation(request: Request): {
   return {
     userId,
     userData,
-    tokenData: request.body.tokenData,
+    tokenData: request.tokenData,
   };
 }
 
@@ -87,7 +87,7 @@ export function changePasswordValidation(request: Request): {
   return {
     oldPassword: body.oldPassword,
     newPassword: body.newPassword,
-    tokenData: request.body.tokenData,
+    tokenData: request.tokenData,
     userId,
   };
 }

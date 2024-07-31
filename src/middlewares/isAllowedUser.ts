@@ -2,13 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import { TokenData } from "../types/token";
 import { getUserById } from "../services/user";
 
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: any;
+  }
+}
+
 export async function onlyAdmin(
   request: Request,
   response: Response,
   next: NextFunction
 ) {
   try {
-    const tokenData = request.body.tokenData as TokenData;
+    const tokenData = request.tokenData as TokenData;
 
     const user = await getUserById(tokenData.id);
 
@@ -28,7 +34,7 @@ export async function onlyAdmin(
       });
     }
 
-    request.body.user = user;
+    request.user=user;
 
     next();
   } catch (error) {
@@ -43,7 +49,7 @@ export async function onlyUser(
   next: NextFunction
 ) {
   try {
-    const tokenData = request.body.tokenData as TokenData;
+    const tokenData = request.tokenData as TokenData;
 
     const user = await getUserById(tokenData.id);
 
@@ -63,6 +69,8 @@ export async function onlyUser(
       });
     }
 
+    request.user=user
+
     next();
   } catch (error) {
     console.error(error);
@@ -76,7 +84,7 @@ export async function onlyArtist(
   next: NextFunction
 ) {
   try {
-    const tokenData = request.body.tokenData as TokenData;
+    const tokenData = request.tokenData as TokenData;
 
     const user = await getUserById(tokenData.id);
 
@@ -95,6 +103,8 @@ export async function onlyArtist(
         message: "Unauthorized Only Artist can access",
       });
     }
+
+    request.user = user;
 
     request.body.user = user;
 
@@ -146,7 +156,7 @@ export async function AllRegisteredUser(
   next: NextFunction
 ) {
   try {
-    const tokenData = request.body.tokenData as TokenData;
+    const tokenData = request.tokenData as TokenData;
 
     const user = await getUserById(tokenData.id);
 
@@ -158,7 +168,7 @@ export async function AllRegisteredUser(
       });
     }
 
-    request.body.user = user;
+    request.user = user;
 
     next();
   } catch (error) {

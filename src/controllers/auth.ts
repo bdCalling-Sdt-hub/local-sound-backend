@@ -19,6 +19,7 @@ import { sentOtpByEmail } from "../services/mail";
 import { generateToken } from "../services/jwt";
 import { createNotification } from "../services/notification";
 import { User } from "../types/user";
+import { TokenData } from "../types/token";
 
 export async function registerController(
   request: Request,
@@ -194,7 +195,7 @@ export async function resendOTPController(
       sentOtpByEmail(user.email, otp.code);
 
       return response.json(
-        responseBuilder(true, 200, "A OTP sent to your email",{id: user.id})
+        responseBuilder(true, 200, "A OTP sent to your email", { id: user.id })
       );
     }
 
@@ -217,7 +218,9 @@ export async function resendOTPController(
     sentOtpByEmail(user.email, otp.code);
 
     return response.json(
-      responseBuilder(true, 200, "A new OTP sent to your email",{id: user.id})
+      responseBuilder(true, 200, "A new OTP sent to your email", {
+        id: user.id,
+      })
     );
   } catch (error) {
     console.error(error);
@@ -261,7 +264,7 @@ export async function forgotController(
 
     sentOtpByEmail(email, otp.code);
     return response.json(
-      responseBuilder(true, 200, "A OTP sent to your email",{id: user.id})
+      responseBuilder(true, 200, "A OTP sent to your email", { id: user.id })
     );
   } catch (error) {
     console.error(error);
@@ -275,7 +278,7 @@ export async function getSessionController(
   next: NextFunction
 ) {
   try {
-    const { tokenData } = request.body;
+    const tokenData = request.tokenData as TokenData;
 
     const user = await getUserById(tokenData.id);
 

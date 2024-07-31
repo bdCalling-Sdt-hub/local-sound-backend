@@ -20,7 +20,7 @@ export async function createPaymentController(
 ) {
   try {
     const { stripeToken, subscriptionId } = createPaymentValidation(request);
-    const user = request.body.user;
+    const user = request.user;
 
     const subscription = await getSubscriptionById(subscriptionId);
 
@@ -45,11 +45,7 @@ export async function createPaymentController(
     });
 
     if (charge.status !== "succeeded") {
-      return response.json({
-        success: false,
-        status: 400,
-        message: "Payment failed",
-      });
+      return response.json(responseBuilder(false, 400, "Payment failed"));
     }
 
     const expireAt = new Date(

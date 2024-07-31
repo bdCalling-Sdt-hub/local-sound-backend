@@ -30,6 +30,9 @@ model Users {
   OTPs          OTPs[]
   Ads           Ads[]
   Payments      Payments[]
+  Withdrawals   Withdrawals[]
+  Musics        Musics[]
+  Transactions  Transactions[]
 }
 
 model Notifications {
@@ -85,4 +88,55 @@ model Payments {
   subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+}
+
+model AppData {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  about     String
+  privacy   String
+  terms     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Withdrawals {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String           @db.ObjectId
+  user        Users            @relation(fields: [userId], references: [id])
+  amount      Int
+  bankName    String
+  accountNo   String
+  accountType String
+  status      WithdrawalStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Musics {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      Users    @relation(fields: [userId], references: [id])
+  name      String
+  image     String
+  audio     String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transactions {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  buyerId   String   @db.ObjectId
+  sellerId  String   @db.ObjectId
+  seller    Users    @relation(fields: [sellerId], references: [id])
+  amount    Float
+  musicId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

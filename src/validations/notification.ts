@@ -28,7 +28,7 @@ export async function userNotificationsValidation(request: Request): Promise<{
 
   return {
     userId: params.userId,
-    tokenData: request.body.tokenData,
+    tokenData: request.tokenData,
     limit,
     page,
   };

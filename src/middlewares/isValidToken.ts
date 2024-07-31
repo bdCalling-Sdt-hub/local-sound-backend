@@ -2,6 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../services/jwt";
 import responseBuilder from "../utils/responseBuilder";
 
+declare module "express-serve-static-core" {
+  interface Request {
+    tokenData?: any;
+  }
+}
+
 export default function isValidToken(
   request: Request,
   response: Response,
@@ -22,7 +28,7 @@ export default function isValidToken(
       .status(401)
       .json(responseBuilder(false, 401, "Invalid token"));
 
-  request.body.tokenData = tokenData;
+  request.tokenData = tokenData;
 
   return next();
 }

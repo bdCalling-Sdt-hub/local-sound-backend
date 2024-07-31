@@ -11,6 +11,17 @@ app.use(express.json());
 
 app.use(routes);
 
+const errorMessages = [
+  "You successfully failed!",
+  "Congratulations, you broke it!",
+  "Achievement unlocked: Server Error!",
+  "Well done, you found our bug!",
+  "Oops! You did it again!",
+  "Bravo! You triggered an error!",
+  "Nailed it! Error achieved!",
+  "Hooray! You've confused the server!",
+];
+
 app.use(
   (error: CustomError, _: Request, response: Response, next: NextFunction) => {
     if (error.status) {
@@ -18,9 +29,12 @@ app.use(
         .status(error.status)
         .json(responseBuilder(false, error.status, error.message));
     } else {
+      const randomMessage =
+        errorMessages[Math.floor(Math.random() * errorMessages.length)];
+
       return response
         .status(500)
-        .json(responseBuilder(false, 500, "Internal Server Error"));
+        .json(responseBuilder(false, 500, randomMessage));
     }
   }
 );

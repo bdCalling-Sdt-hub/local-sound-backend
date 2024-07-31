@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import responseBuilder from "../utils/responseBuilder";
 import { countAds, createAd, getAds } from "../services/ad";
 import type { User } from "../types/user";
-import type { TokenData } from "../types/token";
-import { getLastOtpByUserId } from "../services/otp";
 import { createAdValidation, getAdsValidation } from "../validations/ad";
 import paginationBuilder from "../utils/paginationBuilder";
+import { getLastPaymentByUserId } from "../services/payments";
 
 export async function createAdController(
   request: Request,
@@ -13,22 +12,19 @@ export async function createAdController(
   next: NextFunction
 ) {
   try {
-    const { user } = request.body as {
-      user: User;
-      tokenData: TokenData;
-    };
+    const user = request.user as User;
 
     const { date, description, image, time, title, venue } =
       createAdValidation(request);
 
-    const payment = await getLastOtpByUserId(user.id);
+    const payment = await getLastPaymentByUserId(user.id);
 
     if (!payment)
       return response.json(
         responseBuilder(false, 400, "No subscription found")
       );
 
-    if (payment.expiredAt < new Date())
+    if (payment.expireAt < new Date())
       return response.json(responseBuilder(false, 400, "Subscription expired"));
 
     const ad = await createAd({

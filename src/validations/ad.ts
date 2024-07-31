@@ -8,7 +8,7 @@ export function createAdValidation(request: Request): {
   title: string;
   venue: string;
 } {
-  const body = request.body;
+  const body = JSON.parse(JSON.stringify(request.body));
 
   if (!body.date) throw new Error("Date is required");
   if (!body.description) throw new Error("Description is required");
