@@ -1,4 +1,5 @@
 import { Request } from "express";
+import error from "../utils/error";
 
 export function createAdValidation(request: Request): {
   date: string;
@@ -10,20 +11,23 @@ export function createAdValidation(request: Request): {
 } {
   const body = JSON.parse(JSON.stringify(request.body));
 
-  if (!body.date) throw new Error("Date is required");
-  if (!body.description) throw new Error("Description is required");
-  if (!body.image) throw new Error("Image is required");
-  if (!body.time) throw new Error("Time is required");
-  if (!body.title) throw new Error("Title is required");
-  if (!body.venue) throw new Error("Venue is required");
+  if (!body.date) throw error("Date is required", 400);
+  if (!body.description) throw error("Description is required", 400);
+  if (!body.image) throw error("Image is required", 400);
+  if (!body.time) throw error("Time is required", 400);
+  if (!body.title) throw error("Title is required", 400);
+  if (!body.venue) throw error("Venue is required", 400);
 
-  if (typeof body.date !== "string") throw new Error("Date must be a string");
+  if (typeof body.date !== "string") throw error("Date must be a string", 400);
   if (typeof body.description !== "string")
-    throw new Error("Description must be a string");
-  if (typeof body.image !== "string") throw new Error("Image must be a string");
-  if (typeof body.time !== "string") throw new Error("Time must be a string");
-  if (typeof body.title !== "string") throw new Error("Title must be a string");
-  if (typeof body.venue !== "string") throw new Error("Venue must be a string");
+    throw error("Description must be a string", 400);
+  if (typeof body.image !== "string")
+    throw error("Image must be a string", 400);
+  if (typeof body.time !== "string") throw error("Time must be a string", 400);
+  if (typeof body.title !== "string")
+    throw error("Title must be a string", 400);
+  if (typeof body.venue !== "string")
+    throw error("Venue must be a string", 400);
 
   return {
     date: body.date,

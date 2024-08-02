@@ -4,7 +4,7 @@ import { countAds, createAd, getAds } from "../services/ad";
 import type { User } from "../types/user";
 import { createAdValidation, getAdsValidation } from "../validations/ad";
 import paginationBuilder from "../utils/paginationBuilder";
-import { getLastPaymentByUserId } from "../services/payments";
+import { getLastPaymentByUserId } from "../services/payment";
 
 export async function createAdController(
   request: Request,

@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import { createPaymentValidation } from "../validations/payment";
-import { createPayment } from "../services/payments";
+import { createPayment } from "../services/payment";
 import { getSubscriptionById } from "../services/subscription";
 import Stripe from "stripe";
 import responseBuilder from "../utils/responseBuilder";
+import { createNotification } from "../services/notification";
+import { getAdmin } from "../services/user";
 
 const stripe_secret_key = process.env.STRIPE_SECRET_KEY;
 
@@ -60,9 +62,39 @@ export async function createPaymentController(
       expireAt,
     });
 
+    sendNotifications({
+      subscriptionName: subscription.name,
+      userId: user.id,
+      userName: user.name,
+    });
+
     return response.json(responseBuilder(true, 200, "Payment successful"));
   } catch (error) {
     console.error(error);
     next(error);
+  }
+}
+
+async function sendNotifications({
+  subscriptionName,
+  userId,
+  userName,
+}: {
+  subscriptionName: string;
+  userId: string;
+  userName: string;
+}) {
+  await createNotification({
+    userId: userId,
+    message: `You have successfully subscribed to ${subscriptionName} subscription`,
+  });
+
+  const admin = await getAdmin();
+
+  if (admin) {
+    await createNotification({
+      userId: admin.id,
+      message: `${userName} has successfully subscribed to ${subscriptionName} subscription`,
+    });
   }
 }

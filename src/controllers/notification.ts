@@ -17,7 +17,13 @@ export async function userNotificationsController(
       await userNotificationsValidation(request);
 
     if (tokenData.id !== userId) {
-      return response.json(responseBuilder(false, 401, "Unauthorized"));
+      return response.json(
+        responseBuilder(
+          false,
+          401,
+          "unauthorized"
+        )
+      );
     }
 
     const skip = (page - 1) * limit;

@@ -74,3 +74,11 @@ export function updateUserById(id: string, data: UpdateUser) {
     },
   });
 }
+
+export function getAdmin() {
+  return prisma.users.findFirst({
+    where: {
+      type: "ADMIN",
+    },
+  });
+}

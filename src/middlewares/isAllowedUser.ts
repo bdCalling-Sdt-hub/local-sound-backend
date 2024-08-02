@@ -106,8 +106,6 @@ export async function onlyArtist(
 
     request.user = user;
 
-    request.body.user = user;
-
     next();
   } catch (error) {
     console.error(error);
@@ -150,7 +148,7 @@ export async function onlyArtist(
 //   }
 // }
 
-export async function AllRegisteredUser(
+export async function allRegisteredUser(
   request: Request,
   response: Response,
   next: NextFunction

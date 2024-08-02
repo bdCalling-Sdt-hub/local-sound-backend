@@ -39,9 +39,16 @@ export function getAds(limit: number, skip: number) {
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 }
 
-export function countAds(){
-  return prisma.ads.count()
+export function countAds() {
+  return prisma.ads.count();
 }

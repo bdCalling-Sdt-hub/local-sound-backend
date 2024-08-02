@@ -6,13 +6,13 @@ import {
 } from "../controllers/user";
 import upload from "../utils/upload";
 import isValidToken from "../middlewares/isValidToken";
-import { AllRegisteredUser } from "../middlewares/isAllowedUser";
+import { allRegisteredUser } from "../middlewares/isAllowedUser";
 
 const router = express.Router();
 
 router
   .route("/:userId")
-  .all(isValidToken, AllRegisteredUser)
+  .all(isValidToken, allRegisteredUser)
   // .get(getUserController)
   .put(upload.single("image"), updateUserController)
   .patch(changePasswordController);

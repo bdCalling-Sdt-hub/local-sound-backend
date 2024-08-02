@@ -32,7 +32,8 @@ model Users {
   Payments      Payments[]
   Withdrawals   Withdrawals[]
   Musics        Musics[]
-  Transactions  Transactions[]
+  Likes         Likes[]
+  playLists     playLists[]
 }
 
 model Notifications {
@@ -119,24 +120,60 @@ model Withdrawals {
 }
 
 model Musics {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String            @db.ObjectId
+  user            Users             @relation(fields: [userId], references: [id])
+  name            String
+  image           String
+  audio           String
+  price           Float
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Likes           Likes[]
+  playListsMusics playListsMusics[]
+}
+
+// model Transactions {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   buyerId   String   @db.ObjectId
+//   sellerId  String   @db.ObjectId
+//   seller    Users    @relation(fields: [sellerId], references: [id])
+//   amount    Float
+//   musicId   String   @db.ObjectId
+//   music     Musics   @relation(fields: [musicId], references: [id])
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+model Likes {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId
   user      Users    @relation(fields: [userId], references: [id])
-  name      String
-  image     String
-  audio     String
-  price     Float
+  musicId   String   @db.ObjectId
+  music     Musics   @relation(fields: [musicId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@unique([userId, musicId])
 }
 
-model Transactions {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  buyerId   String   @db.ObjectId
-  sellerId  String   @db.ObjectId
-  seller    Users    @relation(fields: [sellerId], references: [id])
-  amount    Float
-  musicId   String   @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model playLists {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String            @db.ObjectId
+  user            Users             @relation(fields: [userId], references: [id])
+  name            String
+  createdAt       DateTime          @default(now())
+  playListsMusics playListsMusics[]
+
+  @@unique([userId, name])
+}
+
+model playListsMusics {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  playListId String    @db.ObjectId
+  playList   playLists @relation(fields: [playListId], references: [id])
+  musicId    String    @db.ObjectId
+  music      Musics    @relation(fields: [musicId], references: [id])
+  createdAt  DateTime  @default(now())
+
+  @@unique([playListId, musicId])
 }

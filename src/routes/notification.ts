@@ -1,10 +1,15 @@
 import express from "express";
 import { userNotificationsController } from "../controllers/notification";
 import isValidToken from "../middlewares/isValidToken";
-import { AllRegisteredUser } from "../middlewares/isAllowedUser";
+import { allRegisteredUser } from "../middlewares/isAllowedUser";
 
 const router = express.Router();
 
-router.get("/:userId",isValidToken,AllRegisteredUser,userNotificationsController);
+router.get(
+  "/:userId",
+  isValidToken,
+  allRegisteredUser,
+  userNotificationsController
+);
 
 export default router;

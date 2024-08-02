@@ -1,27 +1,28 @@
 import type { Request } from "express";
 import { isValidObjectId } from "../utils/validators";
+import error from "../utils/error";
 
 export function createPaymentValidation(request: Request) {
   const body = request.body;
 
   if (!body.stripeToken) {
-    throw new Error("stripeToken is required");
+    throw error("stripeToken is required", 400);
   }
 
   if (typeof body.stripeToken !== "string") {
-    throw new Error("stripeToken should be a string");
+    throw error("stripeToken should be a string", 400);
   }
 
   if (!body.subscriptionId) {
-    throw new Error("subscriptionId is required");
+    throw error("subscriptionId is required", 400);
   }
 
   if (typeof body.subscriptionId !== "string") {
-    throw new Error("subscriptionId should be a string");
+    throw error("subscriptionId should be a string", 400);
   }
 
   if (!isValidObjectId(body.subscriptionId)) {
-    throw new Error("subscriptionId is invalid");
+    throw error("subscriptionId is invalid", 400);
   }
 
   return {

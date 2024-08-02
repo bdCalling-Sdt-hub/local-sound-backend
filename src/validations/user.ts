@@ -31,7 +31,7 @@ export function updateUserValidation(request: Request): {
   const body = JSON.parse(JSON.stringify(request.body));
 
   if (!userId) {
-    throw new Error("User ID is required");
+    throw error("User ID is required",400);
   }
 
   if (!isValidObjectId(userId)) throw error("Invalid user ID", 400);
@@ -73,7 +73,7 @@ export function changePasswordValidation(request: Request): {
   const userId = request.params.userId;
 
   if (!userId) {
-    throw new Error("User ID is required");
+    throw error("User ID is required",400);
   }
 
   if (!isValidObjectId(userId)) throw error("Invalid user ID", 400);
