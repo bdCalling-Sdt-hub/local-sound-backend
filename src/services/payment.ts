@@ -32,3 +32,14 @@ export function getLastPaymentByUserId(userId: string) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export function getPayments(limit: number, skip: number) {
+  return prisma.payments.findMany({
+    take: limit,
+    skip,
+  });
+}
+
+export function countPayments() {
+  return prisma.payments.count();
+}

@@ -25,13 +25,18 @@ export async function userNotificationsController(
     const skip = (page - 1) * limit;
 
     const totalNotifications = await countNotifications(userId);
-    const notifications = await getNotificationsByUserId(userId, limit, skip);
 
     const pagination = paginationBuilder({
       currentPage: page,
       limit,
       totalData: totalNotifications,
     });
+
+    if (page > pagination.totalPage) {
+      return response.json(responseBuilder(false, 404, "Page not found"));
+    }
+    
+    const notifications = await getNotificationsByUserId(userId, limit, skip);
 
     return response.json(
       responseBuilder(

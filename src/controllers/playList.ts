@@ -41,19 +41,23 @@ export async function getPlayListsController(
 
     const { limit, page } = getPlayListsValidation(request);
 
-    const skip = (page - 1) * limit;
-    const playLists = await getPlayListsByUserId({
-      userId: user.id,
-      limit,
-      skip,
-    });
-
     const totalPlayLists = await countPlayLists(user.id);
 
     const pagination = paginationBuilder({
       currentPage: page,
       limit,
       totalData: totalPlayLists,
+    });
+
+    if (page > pagination.totalPage) {
+      return response.json(responseBuilder(false, 404, "page not found"));
+    }
+
+    const skip = (page - 1) * limit;
+    const playLists = await getPlayListsByUserId({
+      userId: user.id,
+      limit,
+      skip,
     });
 
     return response.json(

@@ -59,6 +59,12 @@ export async function getAdsController(
       totalData: totalAd,
     });
 
+    if(page > pagination.totalPage) {
+      return response.json(
+        responseBuilder(false, 400, "Page not found")
+      );
+    }
+
     const skip = (page - 1) * limit;
 
     const ads = await getAds(limit, skip);

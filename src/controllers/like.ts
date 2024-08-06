@@ -31,6 +31,7 @@ export async function createLikeController(
 
     return response.json(responseBuilder(true, 200, "Like created", like));
   } catch (error) {
+    console.error(error);
     next(error);
   }
 }
@@ -45,9 +46,6 @@ export async function getLikesController(
 
     const { limit, page } = getLikesValidation(request);
 
-    const skip = (page - 1) * limit;
-    const likes = await getLikesByUserId({ userId: user.id, limit, skip });
-
     const totalLikes = await countLikes(user.id);
 
     const pagination = paginationBuilder({
@@ -56,10 +54,20 @@ export async function getLikesController(
       totalData: totalLikes,
     });
 
+    if(page > pagination.totalPage) {
+      return response.json(
+        responseBuilder(false, 404, "page not found")
+      );
+    }
+
+    const skip = (page - 1) * limit;
+    const likes = await getLikesByUserId({ userId: user.id, limit, skip });
+
     return response.json(
       responseBuilder(true, 200, "Likes retrieved", likes, pagination)
     );
   } catch (error) {
+    console.error(error);
     next(error);
   }
 }
@@ -90,6 +98,7 @@ export async function deleteLikeController(
 
     return response.json(responseBuilder(true, 200, "Like deleted"));
   } catch (error) {
+    console.error(error);
     next(error);
   }
 }

@@ -57,20 +57,24 @@ export async function getMusicsController(
   try {
     const { limit, name, page, price } = getMusicsValidation(request);
 
-    const skip = (page - 1) * limit;
-    const musics = await getMusics({
-      limit,
-      price,
-      skip,
-      name,
-    });
-
     const totalMusics = await countMusic(name);
 
     const pagination = paginationBuilder({
       totalData: totalMusics,
       currentPage: page,
       limit,
+    });
+
+    if (page > pagination.totalPage) {
+      return response.json(responseBuilder(false, 404, "Page not found"));
+    }
+
+    const skip = (page - 1) * limit;
+    const musics = await getMusics({
+      limit,
+      price,
+      skip,
+      name,
     });
 
     response.json(responseBuilder(true, 200, "Musics", musics, pagination));

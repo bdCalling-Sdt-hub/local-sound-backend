@@ -31,7 +31,7 @@ export function updateUserValidation(request: Request): {
   const body = JSON.parse(JSON.stringify(request.body));
 
   if (!userId) {
-    throw error("User ID is required",400);
+    throw error("User ID is required", 400);
   }
 
   if (!isValidObjectId(userId)) throw error("Invalid user ID", 400);
@@ -73,7 +73,7 @@ export function changePasswordValidation(request: Request): {
   const userId = request.params.userId;
 
   if (!userId) {
-    throw error("User ID is required",400);
+    throw error("User ID is required", 400);
   }
 
   if (!isValidObjectId(userId)) throw error("Invalid user ID", 400);
@@ -89,5 +89,33 @@ export function changePasswordValidation(request: Request): {
     newPassword: body.newPassword,
     tokenData: request.tokenData,
     userId,
+  };
+}
+
+export function getUsersValidation(request: Request): {
+  page: number;
+  limit: number;
+  type?: "USER" | "ARTIST";
+} {
+  const query = request.query;
+
+  let page = parseInt(query.page as string) || 1;
+
+  if (page < 1) page = 1;
+
+  let limit = parseInt(query.limit as string) || 10;
+
+  if (limit > 100) limit = 100;
+
+  if (limit < 1) limit = 1;
+
+  if (query.type && query.type !== "USER" && query.type !== "ARTIST") {
+    throw error("Invalid user type", 400);
+  }
+
+  return {
+    limit,
+    page,
+    type: query.type as undefined | "USER" | "ARTIST",
   };
 }

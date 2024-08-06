@@ -53,6 +53,7 @@ model Subscriptions {
   price     Float
   duration  Int
   Benefits  String[]
+  isDeleted Boolean    @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   Payments  Payments[]

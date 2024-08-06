@@ -15,9 +15,9 @@ router.post("/login", loginController);
 
 router.post("/register", registerController);
 
-router.get("/forgot", forgotController);
+router.post("/forgot", forgotController);
 
-router.get("/session", isValidToken, getSessionController);
+router.post("/session", isValidToken, getSessionController);
 
 router.route("/otp").post(verifyOtpController).get(resendOTPController);
 

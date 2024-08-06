@@ -108,13 +108,13 @@ export function resendOtpValidation(request: Request): { userId: string } {
 }
 
 export function forgotPasswordValidation(request: Request): { email: string } {
-  const query = request.query as { email: string | undefined };
+  const body = request.body
 
-  if (!query.email) throw error("Email is required", 400);
+  if (!body.email) throw error("Email is required", 400);
 
-  validateEmail(query.email);
+  validateEmail(body.email);
 
   return {
-    email: query.email,
+    email: body.email,
   };
 }

@@ -1,14 +1,16 @@
 import express from "express";
 import {
-  getUserController,
+  getUsersController,
   updateUserController,
   changePasswordController,
 } from "../controllers/user";
 import upload from "../utils/upload";
 import isValidToken from "../middlewares/isValidToken";
-import { allRegisteredUser } from "../middlewares/isAllowedUser";
+import { allRegisteredUser, onlyAdmin } from "../middlewares/isAllowedUser";
 
 const router = express.Router();
+
+router.route("/").get(isValidToken, onlyAdmin, getUsersController);
 
 router
   .route("/:userId")

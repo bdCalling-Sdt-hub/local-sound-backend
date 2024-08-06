@@ -1,10 +1,25 @@
 import express from "express";
-import { onlyAdmin } from "../middlewares/isAllowedUser";
+import { allRegisteredUser, onlyAdmin } from "../middlewares/isAllowedUser";
 import isValidToken from "../middlewares/isValidToken";
-import { createSubscriptionController } from "../controllers/subscription";
+import {
+  createSubscriptionController,
+  deleteSubscriptionController,
+  getSubscriptionsController,
+  updateSubscriptionController,
+} from "../controllers/subscription";
 
 const router = express.Router();
 
-router.route("/").post(isValidToken, onlyAdmin, createSubscriptionController);
+router
+  .route("/")
+  .all(isValidToken)
+  .post(onlyAdmin, createSubscriptionController)
+  .get(allRegisteredUser, getSubscriptionsController);
+
+router
+  .route("/:id")
+  .all(isValidToken)
+  .put(onlyAdmin, updateSubscriptionController)
+  .delete(onlyAdmin, deleteSubscriptionController);
 
 export default router;

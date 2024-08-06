@@ -46,8 +46,6 @@ export async function registerController(
     });
 
     const otp = await createOtp(user.id);
-    console.log(otp.code);
-    
 
     sentOtpByEmail(email, otp.code);
 
@@ -87,9 +85,33 @@ export async function loginController(
     }
 
     if (!user.isVerified) {
-      request.query.userId = user.id;
-      resendOTPController(request, response, next);
-      return;
+      const prevuesOtp = await getLastOtpByUserId(user.id);
+
+      if (!prevuesOtp) {
+        const otp = await createOtp(user.id);
+        sentOtpByEmail(user.email, otp.code);
+
+        return response.json(
+          responseBuilder(false, 401, "Please verify your email", {
+            id: user.id,
+          })
+        );
+      }
+
+      if (prevuesOtp.createdAt > new Date(new Date().getTime() - 120000)) {
+        return response.json(
+          responseBuilder(false, 401, "Please verify your email", {
+            id: user.id,
+          })
+        );
+      }
+
+      const otp = await createOtp(user.id);
+      sentOtpByEmail(user.email, otp.code);
+
+      return response.json(
+        responseBuilder(true, 401, "Please verify your email", { id: user.id })
+      );
     }
 
     const token = generateToken({

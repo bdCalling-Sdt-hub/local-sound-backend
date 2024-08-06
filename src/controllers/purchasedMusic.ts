@@ -90,11 +90,6 @@ export async function getPurchasedMusicsController(
     const { limit, page } = getPurchasedMusicsValidation(request);
 
     const skip = (page - 1) * limit;
-    const purchasedMusics = await getPurchasedMusicsByUserId({
-      userId: user.id,
-      limit,
-      skip,
-    });
 
     const totalMusic = await countPurchasedMusics(user.id);
 
@@ -102,6 +97,16 @@ export async function getPurchasedMusicsController(
       currentPage: page,
       limit,
       totalData: totalMusic,
+    });
+
+    if (page > pagination.totalPage) {
+      return response.json(responseBuilder(false, 404, "Page not found"));
+    }
+
+    const purchasedMusics = await getPurchasedMusicsByUserId({
+      userId: user.id,
+      limit,
+      skip,
     });
 
     return response.json(

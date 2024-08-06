@@ -34,7 +34,7 @@ router
   .route("/:musicId")
   .all(isValidToken)
   .get(allRegisteredUser, getSingleMusicController)
-  .post(
+  .put(
     onlyArtist,
     upload.fields([
       {

@@ -35,7 +35,7 @@ export function getUserByEmail(email: string) {
   });
 }
 
-export function getUserById(id: string,takePassword=false) {
+export function getUserById(id: string, takePassword = false) {
   return prisma.users.findUnique({
     where: {
       id,
@@ -79,6 +79,38 @@ export function getAdmin() {
   return prisma.users.findFirst({
     where: {
       type: "ADMIN",
+    },
+  });
+}
+
+export function getUsers(
+  limit: number,
+  skip: number,
+  type?: "USER" | "ARTIST"
+) {
+  return prisma.users.findMany({
+    where: {
+      type,
+    },
+    take: limit,
+    skip,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      dateOfBirth: true,
+      address: true,
+      number: true,
+      image: true,
+      isVerified: true,
+    },
+  });
+}
+
+export function countUsers(type?: "USER" | "ARTIST") {
+  return prisma.users.count({
+    where: {
+      type,
     },
   });
 }
