@@ -13,6 +13,14 @@ export function createWithdrawalValidation(request: Request): {
     throw error("Amount is required and must be a number", 400);
   }
 
+  if (body.amount < 1) {
+    throw error("Amount must be greater than 0", 400);
+  }
+
+  if (!Number.isInteger(body.amount)) {
+    throw error("Amount must be an integer", 400);
+  }
+
   if (!body.accountNo || typeof body.accountNo !== "string") {
     throw error("Account number is required and must be a string", 400);
   }

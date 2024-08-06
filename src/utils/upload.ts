@@ -30,7 +30,7 @@ const fileFilter = (
 ) => {
   let allowedFileTypes = ["jpg", "jpeg", "png", "mp3"];
 
-  if (req.originalUrl !== "/musics")
+  if (!req.originalUrl.includes("musics"))
     allowedFileTypes = allowedFileTypes.slice(0, 3);
   
   const extName = path.extname(file.originalname).toLowerCase();

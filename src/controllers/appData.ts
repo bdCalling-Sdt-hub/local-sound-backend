@@ -21,7 +21,6 @@ export async function getAppDataController(
 
     return response.json(responseBuilder(true, 200, "App data", appData));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

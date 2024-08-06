@@ -32,6 +32,20 @@ export function getLikesByUserId({
     },
     take: limit,
     skip,
+    include: {
+      music: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
@@ -43,17 +57,18 @@ export function countLikes(userId?: string) {
   });
 }
 
-export function deleteLike({
-  userId,
-  musicId,
-}: {
-  userId: string;
-  musicId: string;
-}) {
-  return prisma.likes.deleteMany({
+export function deleteLike(id: string) {
+  return prisma.likes.delete({
     where: {
-      userId,
-      musicId,
+      id,
+    },
+  });
+}
+
+export function getLikeById(id: string) {
+  return prisma.likes.findUnique({
+    where: {
+      id,
     },
   });
 }

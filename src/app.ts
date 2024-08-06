@@ -3,11 +3,14 @@ import { streamingMusic } from "./controllers/stream";
 import { CustomError } from "./utils/error";
 import routes from "./routes";
 import responseBuilder from "./utils/responseBuilder";
+import morgan from "morgan";
 
 const app = express();
 
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
+
+app.use(morgan("combined"));
 
 app.use(routes);
 
@@ -24,6 +27,8 @@ const errorMessages = [
 
 app.use(
   (error: CustomError, _: Request, response: Response, next: NextFunction) => {
+    console.error(error);
+
     if (error.status) {
       return response
         .status(error.status)

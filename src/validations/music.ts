@@ -149,3 +149,22 @@ export function updateMusicValidation(request: Request): {
 
   return { musicId: params.musicId, changes: musicData };
 }
+
+
+export function getSingleMusicValidation(request: Request): {
+  musicId: string;
+} {
+  const params = request.params;
+
+  if (!params.musicId) {
+    throw error("Music ID is required", 400);
+  }
+
+  if (!isValidObjectId(params.musicId)) {
+    throw error("Invalid music ID", 400);
+  }
+
+  return {
+    musicId: params.musicId,
+  };
+}

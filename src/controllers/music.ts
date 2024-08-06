@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   createMusicValidation,
   getMusicsValidation,
+  getSingleMusicValidation,
   updateMusicValidation,
 } from "../validations/music";
 import {
@@ -44,7 +45,6 @@ export async function createMusicController(
 
     response.json(responseBuilder(true, 200, "Music created", music));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -75,7 +75,6 @@ export async function getMusicsController(
 
     response.json(responseBuilder(true, 200, "Musics", musics, pagination));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -90,15 +89,15 @@ export async function updateMusicController(
     const user = request.user;
 
     if (Object.keys(changes).length === 0) {
-      return response.json(
-        responseBuilder(false, 400, "Nothing to update")
-      );
+      return response.json(responseBuilder(false, 400, "Nothing to update"));
     }
 
     const music = await getMusicById(musicId);
 
     if (music?.userId !== user.id) {
-      return response.json(responseBuilder(false, 401, "unauthorized"));
+      return response.json(
+        responseBuilder(false, 403, "You are not allowed to update this music")
+      );
     }
 
     const payment = await getLastPaymentByUserId(user.id);
@@ -115,7 +114,25 @@ export async function updateMusicController(
 
     response.json(responseBuilder(true, 200, "Music updated", newMusic));
   } catch (error) {
-    console.error(error);
+    next(error);
+  }
+}
+
+export async function getSingleMusicController(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const { musicId } = getSingleMusicValidation(request);
+
+    const music = await getMusicById(musicId);
+
+    if (!music)
+      return response.json(responseBuilder(false, 404, "Music not found"));
+
+    response.json(responseBuilder(true, 200, "Music", music));
+  } catch (error) {
     next(error);
   }
 }

@@ -32,7 +32,6 @@ export async function getUserController(
 
     return response.json(responseBuilder(true, 200, "User retrieved", user));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -63,7 +62,6 @@ export async function updateUserController(
 
     return response.json(responseBuilder(true, 200, "User updated", user));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -101,7 +99,6 @@ export async function changePasswordController(
 
     return response.json(responseBuilder(true, 200, "Password updated"));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

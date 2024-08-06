@@ -25,7 +25,6 @@ export async function createSubscriptionController(
       data: subscription,
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

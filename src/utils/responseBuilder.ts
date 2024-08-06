@@ -11,18 +11,8 @@ export default function responseBuilder(
     totalData: number;
   }
 ) {
-  if (!ok) {
-    return {
-      status: "failed",
-      statusCode,
-      message,
-      data: data || {},
-      pagination: pagination || {},
-    };
-  }
-
   return {
-    status: "success",
+    status: ok ? "success" : "failed",
     statusCode,
     message,
     data: data || {},

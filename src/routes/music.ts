@@ -5,6 +5,7 @@ import upload from "../utils/upload";
 import {
   createMusicController,
   getMusicsController,
+  getSingleMusicController,
   updateMusicController,
 } from "../controllers/music";
 
@@ -32,6 +33,7 @@ router
 router
   .route("/:musicId")
   .all(isValidToken)
+  .get(allRegisteredUser, getSingleMusicController)
   .post(
     onlyArtist,
     upload.fields([

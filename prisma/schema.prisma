@@ -14,26 +14,29 @@ enum UserType {
 }
 
 model Users {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  email         String          @unique
-  image         String?
-  password      String
-  type          UserType
-  isVerified    Boolean         @default(false)
-  number        String?
-  address       String?
-  dateOfBirth   String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  Notifications Notifications[]
-  OTPs          OTPs[]
-  Ads           Ads[]
-  Payments      Payments[]
-  Withdrawals   Withdrawals[]
-  Musics        Musics[]
-  Likes         Likes[]
-  playLists     playLists[]
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String            @unique
+  image           String?
+  password        String
+  type            UserType
+  balance         Float             @default(0)
+  isVerified      Boolean           @default(false)
+  number          String?
+  address         String?
+  dateOfBirth     String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Notifications   Notifications[]
+  OTPs            OTPs[]
+  Ads             Ads[]
+  Payments        Payments[]
+  Musics          Musics[]
+  Likes           Likes[]
+  PlayLists       PlayLists[]
+  ReSells         ReSells[]
+  PurchasedMusics PurchasedMusics[]
+  Transactions    Transactions[]
 }
 
 model Notifications {
@@ -100,25 +103,6 @@ model AppData {
   updatedAt DateTime @updatedAt
 }
 
-enum WithdrawalStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-model Withdrawals {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String           @db.ObjectId
-  user        Users            @relation(fields: [userId], references: [id])
-  amount      Int
-  bankName    String
-  accountNo   String
-  accountType String
-  status      WithdrawalStatus @default(PENDING)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-}
-
 model Musics {
   id              String            @id @default(auto()) @map("_id") @db.ObjectId
   userId          String            @db.ObjectId
@@ -130,20 +114,11 @@ model Musics {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   Likes           Likes[]
-  playListsMusics playListsMusics[]
+  ReSells         ReSells[]
+  PurchasedMusics PurchasedMusics[]
+  PlayListMusics  PlayListMusics[]
+  Transactions    Transactions[]
 }
-
-// model Transactions {
-//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-//   buyerId   String   @db.ObjectId
-//   sellerId  String   @db.ObjectId
-//   seller    Users    @relation(fields: [sellerId], references: [id])
-//   amount    Float
-//   musicId   String   @db.ObjectId
-//   music     Musics   @relation(fields: [musicId], references: [id])
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
 
 model Likes {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -156,24 +131,94 @@ model Likes {
   @@unique([userId, musicId])
 }
 
-model playLists {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String            @db.ObjectId
-  user            Users             @relation(fields: [userId], references: [id])
-  name            String
-  createdAt       DateTime          @default(now())
-  playListsMusics playListsMusics[]
+model PlayLists {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String           @db.ObjectId
+  user           Users            @relation(fields: [userId], references: [id])
+  name           String
+  createdAt      DateTime         @default(now())
+  PlayListMusics PlayListMusics[]
 
   @@unique([userId, name])
 }
 
-model playListsMusics {
+model PlayListMusics {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   playListId String    @db.ObjectId
-  playList   playLists @relation(fields: [playListId], references: [id])
+  playList   PlayLists @relation(fields: [playListId], references: [id])
   musicId    String    @db.ObjectId
   music      Musics    @relation(fields: [musicId], references: [id])
   createdAt  DateTime  @default(now())
 
   @@unique([playListId, musicId])
 }
+
+model Transactions {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  buyerId             String   @db.ObjectId
+  buyer               Users    @relation(fields: [buyerId], references: [id])
+  sellerId            String   @db.ObjectId
+  amount              Float
+  musicId             String   @db.ObjectId
+  music               Musics   @relation(fields: [musicId], references: [id])
+  quantity            Int
+  stripeTransactionId String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model PurchasedMusics {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      Users    @relation(fields: [userId], references: [id])
+  musicId   String   @db.ObjectId
+  music     Musics   @relation(fields: [musicId], references: [id])
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, musicId])
+}
+
+model ReSells {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      Users    @relation(fields: [userId], references: [id])
+  musicId   String   @db.ObjectId
+  music     Musics   @relation(fields: [musicId], references: [id])
+  price     Float
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, musicId])
+}
+
+// model Wallets {
+//   id          String        @id @default(auto()) @map("_id") @db.ObjectId
+//   userId      String        @unique @db.ObjectId
+//   user        Users         @relation(fields: [userId], references: [id])
+//   balance     Float         @default(0)
+//   bankName    String?
+//   accountNo   String?
+//   accountType String?
+//   createdAt   DateTime      @default(now())
+//   updatedAt   DateTime      @updatedAt
+//   Withdrawals Withdrawals[]
+// }
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// model Withdrawals {
+//   id        String           @id @default(auto()) @map("_id") @db.ObjectId
+//   walletId  String           @db.ObjectId
+//   wallet    Wallets          @relation(fields: [walletId], references: [id])
+//   amount    Int
+//   status    WithdrawalStatus @default(PENDING)
+//   createdAt DateTime         @default(now())
+//   updatedAt DateTime         @updatedAt
+// }

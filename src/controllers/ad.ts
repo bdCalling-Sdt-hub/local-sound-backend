@@ -39,7 +39,6 @@ export async function createAdController(
 
     return response.json(responseBuilder(true, 200, "Ad created", ad));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -68,7 +67,6 @@ export async function getAdsController(
       responseBuilder(true, 200, "Ads retrieved", ads, pagination)
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

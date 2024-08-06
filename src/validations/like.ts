@@ -41,3 +41,19 @@ export function getLikesValidation(request: Request): {
     page,
   };
 }
+
+export function deleteLikeValidation(request:Request){
+  const params = request.params;
+
+  if(!params.id || typeof params.id !== "string"){
+    throw error("Id is required and must be a string", 400);
+  }
+
+  if(isBooleanObject(params.id)){
+    throw error("Id must be a string", 400);
+  }
+
+  return {
+    id: params.id
+  }
+}

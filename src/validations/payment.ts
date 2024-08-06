@@ -2,7 +2,10 @@ import type { Request } from "express";
 import { isValidObjectId } from "../utils/validators";
 import error from "../utils/error";
 
-export function createPaymentValidation(request: Request) {
+export function createPaymentValidation(request: Request): {
+  stripeToken: string;
+  subscriptionId: string;
+} {
   const body = request.body;
 
   if (!body.stripeToken) {

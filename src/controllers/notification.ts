@@ -18,11 +18,7 @@ export async function userNotificationsController(
 
     if (tokenData.id !== userId) {
       return response.json(
-        responseBuilder(
-          false,
-          401,
-          "unauthorized"
-        )
+        responseBuilder(false, 403, "You are not allowed to access this data")
       );
     }
 
@@ -47,7 +43,6 @@ export async function userNotificationsController(
       )
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

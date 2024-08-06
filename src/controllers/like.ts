@@ -1,7 +1,17 @@
 import type { Request, Response, NextFunction } from "express";
 import responseBuilder from "../utils/responseBuilder";
-import { createLikeValidation, getLikesValidation } from "../validations/like";
-import { countLikes, createLike, getLikesByUserId } from "../services/like";
+import {
+  createLikeValidation,
+  deleteLikeValidation,
+  getLikesValidation,
+} from "../validations/like";
+import {
+  countLikes,
+  createLike,
+  getLikesByUserId,
+  deleteLike,
+  getLikeById,
+} from "../services/like";
 import paginationBuilder from "../utils/paginationBuilder";
 
 export async function createLikeController(
@@ -21,7 +31,6 @@ export async function createLikeController(
 
     return response.json(responseBuilder(true, 200, "Like created", like));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -51,7 +60,36 @@ export async function getLikesController(
       responseBuilder(true, 200, "Likes retrieved", likes, pagination)
     );
   } catch (error) {
-    console.error(error);
+    next(error);
+  }
+}
+
+export async function deleteLikeController(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const user = request.user;
+
+    const { id } = deleteLikeValidation(request);
+
+    const like = await getLikeById(id);
+
+    if (!like) {
+      return response.json(responseBuilder(false, 404, "Like not found"));
+    }
+
+    if (like.userId !== user.id) {
+      return response.json(
+        responseBuilder(false, 403, "You are not allowed to delete this like")
+      );
+    }
+
+    await deleteLike(like.id);
+
+    return response.json(responseBuilder(true, 200, "Like deleted"));
+  } catch (error) {
     next(error);
   }
 }

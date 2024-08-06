@@ -18,7 +18,6 @@ import { hashPassword, comparePassword } from "../services/hash";
 import { sentOtpByEmail } from "../services/mail";
 import { generateToken } from "../services/jwt";
 import { createNotification } from "../services/notification";
-import { User } from "../types/user";
 import { TokenData } from "../types/token";
 
 export async function registerController(
@@ -47,6 +46,8 @@ export async function registerController(
     });
 
     const otp = await createOtp(user.id);
+    console.log(otp.code);
+    
 
     sentOtpByEmail(email, otp.code);
 
@@ -59,7 +60,6 @@ export async function registerController(
       responseBuilder(true, 201, "A OTP sent to your email", user)
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -120,7 +120,6 @@ export async function loginController(
       })
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -169,7 +168,6 @@ export async function verifyOtpController(
 
     return response.json(responseBuilder(false, 400, "Invalid OTP"));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -223,7 +221,6 @@ export async function resendOTPController(
       })
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -267,7 +264,6 @@ export async function forgotController(
       responseBuilder(true, 200, "A OTP sent to your email", { id: user.id })
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -287,7 +283,6 @@ export async function getSessionController(
     }
     return response.json(responseBuilder(true, 200, "User found", user));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

@@ -28,7 +28,6 @@ export async function createWithdrawalController(
       responseBuilder(true, 200, "Withdrawal created", withdrawal)
     );
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }

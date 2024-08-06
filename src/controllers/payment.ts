@@ -2,18 +2,10 @@ import type { Request, Response, NextFunction } from "express";
 import { createPaymentValidation } from "../validations/payment";
 import { createPayment } from "../services/payment";
 import { getSubscriptionById } from "../services/subscription";
-import Stripe from "stripe";
 import responseBuilder from "../utils/responseBuilder";
 import { createNotification } from "../services/notification";
 import { getAdmin } from "../services/user";
-
-const stripe_secret_key = process.env.STRIPE_SECRET_KEY;
-
-if (!stripe_secret_key) {
-  throw new Error("Stripe secret key is not provided");
-}
-
-const stripe = new Stripe(stripe_secret_key);
+import chargeAmount from "../utils/chargeAmount";
 
 export async function createPaymentController(
   request: Request,
@@ -34,21 +26,12 @@ export async function createPaymentController(
       });
     }
 
-    const customer = await stripe.customers.create({
-      source: stripeToken,
+    const charge = await chargeAmount({
+      stripeToken,
+      amount: subscription.price,
+      description: `Payment for ${subscription.name} subscription`,
       email: user.email,
     });
-
-    const charge = await stripe.charges.create({
-      amount: subscription.price * 100,
-      currency: "usd",
-      customer: customer.id,
-      description: `Payment for ${subscription.name} subscription`,
-    });
-
-    if (charge.status !== "succeeded") {
-      return response.json(responseBuilder(false, 400, "Payment failed"));
-    }
 
     const expireAt = new Date(
       Date.now() + subscription.duration * 30 * 24 * 60 * 60 * 1000
@@ -70,7 +53,6 @@ export async function createPaymentController(
 
     return response.json(responseBuilder(true, 200, "Payment successful"));
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
