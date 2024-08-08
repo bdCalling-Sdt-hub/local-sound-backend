@@ -21,15 +21,23 @@ export function createAppData({
 }
 
 export function getAppData() {
-  return prisma.appData.findFirst();
+  return prisma.appData.findFirst({
+    select: { about: true, privacy: true, terms: true },
+  });
 }
 
-export function updateAppData(data: {
+export async function updateAppData(data: {
   about?: string;
   privacy?: string;
   terms?: string;
 }) {
-  return prisma.appData.updateMany({
+  const appData = await prisma.appData.findFirst();
+
+  return prisma.appData.update({
+    where: {
+      id: appData?.id,
+    },
     data,
+    select: { about: true, privacy: true, terms: true },
   });
 }

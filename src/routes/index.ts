@@ -10,6 +10,9 @@ import musicRouter from "./music";
 import likeRouter from "./like";
 import purchasedMusicRouter from "./purchasedMusic";
 import reSellRouter from "./reSell";
+import playListRouter from "./playList";
+import withdrawalRouter from "./withdrawal";
+import appDataRouter from "./appData";
 
 const router = express.Router();
 
@@ -23,5 +26,8 @@ router.use("/musics", musicRouter);
 router.use("/likes", likeRouter);
 router.use("/purchased-musics", purchasedMusicRouter);
 router.use("/re-sells", reSellRouter);
+router.use("/playlists", playListRouter);
+router.use("/withdrawals", withdrawalRouter);
+router.use("/app-data", appDataRouter);
 
 export default router;

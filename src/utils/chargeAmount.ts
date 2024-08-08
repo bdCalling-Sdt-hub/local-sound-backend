@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 import error from "./error";
+import dotenv from 'dotenv'; 
+dotenv.config();
 
 const stripe_secret_key = process.env.STRIPE_SECRET_KEY;
 

@@ -37,6 +37,7 @@ model Users {
   ReSells         ReSells[]
   PurchasedMusics PurchasedMusics[]
   Transactions    Transactions[]
+  Withdrawals     Withdrawals[]
 }
 
 model Notifications {
@@ -214,12 +215,15 @@ enum WithdrawalStatus {
   REJECTED
 }
 
-// model Withdrawals {
-//   id        String           @id @default(auto()) @map("_id") @db.ObjectId
-//   walletId  String           @db.ObjectId
-//   wallet    Wallets          @relation(fields: [walletId], references: [id])
-//   amount    Int
-//   status    WithdrawalStatus @default(PENDING)
-//   createdAt DateTime         @default(now())
-//   updatedAt DateTime         @updatedAt
-// }
+model Withdrawals {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String           @db.ObjectId
+  user        Users            @relation(fields: [userId], references: [id])
+  amount      Int
+  bankName    String
+  accountNo   String
+  accountType String
+  status      WithdrawalStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}

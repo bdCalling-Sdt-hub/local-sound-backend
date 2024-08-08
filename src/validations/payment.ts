@@ -55,3 +55,19 @@ export function getPaymentsValidation(request: Request): {
     page,
   };
 }
+
+export function getPaymentChartValidation(request: Request): { year: string } {
+  const query = request.query;
+
+  if (query.year && typeof query.year !== "string") {
+    throw error("Year should be a string", 400);
+  }
+
+  if (query.year && isNaN(parseInt(query.year))) {
+    throw error("Year should be a number", 400);
+  }
+
+  return {
+    year: query.year || new Date().getFullYear().toString(),
+  };
+}

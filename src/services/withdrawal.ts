@@ -15,15 +15,27 @@ export function createWithdrawal({
   bankName: string;
   userId: string;
 }) {
-  return prisma.withdrawals.create({
-    data: {
-      accountNo,
-      accountType,
-      amount,
-      bankName,
-      userId,
-    },
-  });
+  return prisma.$transaction([
+    prisma.withdrawals.create({
+      data: {
+        accountNo,
+        accountType,
+        amount,
+        bankName,
+        userId,
+      },
+    }),
+    prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        balance: {
+          decrement: amount,
+        },
+      }
+    }),
+  ]);
 }
 
 export function getWithdrawals(limit: number, skip: number, userId?: string) {
@@ -33,16 +45,42 @@ export function getWithdrawals(limit: number, skip: number, userId?: string) {
     },
     take: limit,
     skip,
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy:{
+      createdAt: "desc",
+    }
   });
 }
 
-export function updateWithdrawals(id: string, status: "APPROVED" | "REJECTED") {
+export function countWithdrawals(userId?: string) {
+  return prisma.withdrawals.count({
+    where: {
+      userId,
+    },
+  });
+}
+
+export function updateWithdrawal(id: string, status: "APPROVED" | "REJECTED") {
   return prisma.withdrawals.update({
     where: {
       id,
     },
     data: {
       status,
+    },
+  });
+}
+
+export function getWithdrawalById(id: string) {
+  return prisma.withdrawals.findUnique({
+    where: {
+      id,
     },
   });
 }

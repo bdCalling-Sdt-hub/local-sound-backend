@@ -2,6 +2,8 @@ import multer, { StorageEngine, FileFilterCallback } from "multer";
 import path from "path";
 import { Request } from "express";
 import error from "./error";
+import dotenv from 'dotenv'; 
+dotenv.config();
 
 const UPLOAD_DIR = process.env.UPLOAD_FOLDER || "public/images/users";
 const MAX_FILE_SIZE = Number(process.env.MAX_FILE_SIZE) || 20971520; // 20 MB

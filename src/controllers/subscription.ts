@@ -9,11 +9,13 @@ import {
   countSubscription,
   createSubscription,
   deleteSubscription,
+  getSubscriptionById,
   getSubscriptions,
   updateSubscription,
 } from "../services/subscription";
 import paginationBuilder from "../utils/paginationBuilder";
 import responseBuilder from "../utils/responseBuilder";
+import { getLastPaymentByUserId } from "../services/payment";
 
 export async function createSubscriptionController(
   request: Request,
@@ -31,7 +33,9 @@ export async function createSubscriptionController(
       Benefits,
     });
 
-    return response.json(responseBuilder(true, 201, "Subscription created", subscription));
+    return response.json(
+      responseBuilder(true, 201, "Subscription created", subscription)
+    );
   } catch (error) {
     next(error);
   }
@@ -50,8 +54,6 @@ export async function getSubscriptionsController(
 
     const totalSubscriptions = await countSubscription();
 
-
-
     const pagination = paginationBuilder({
       currentPage: page,
       limit,
@@ -62,7 +64,15 @@ export async function getSubscriptionsController(
       return response.json(responseBuilder(false, 404, "Page not found"));
     }
 
-    return response.json(responseBuilder(true, 200, "Subscriptions retrieved", subscriptions, pagination));
+    return response.json(
+      responseBuilder(
+        true,
+        200,
+        "Subscriptions retrieved",
+        subscriptions,
+        pagination
+      )
+    );
   } catch (error) {
     next(error);
   }
@@ -85,10 +95,14 @@ export async function updateSubscriptionController(
     });
 
     if (!subscription) {
-      return response.json(responseBuilder(false, 404, "Subscription not found"));
+      return response.json(
+        responseBuilder(false, 404, "Subscription not found")
+      );
     }
 
-    return response.json(responseBuilder(true, 200, "Subscription updated",subscription));
+    return response.json(
+      responseBuilder(true, 200, "Subscription updated", subscription)
+    );
   } catch (error) {
     next(error);
   }
@@ -105,6 +119,42 @@ export async function deleteSubscriptionController(
     await deleteSubscription(subscriptionId);
 
     return response.json(responseBuilder(true, 200, "Subscription deleted"));
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getCurrentSubscriptionController(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const user = request.user;
+
+    const payment = await getLastPaymentByUserId(user.id);
+
+    if (!payment) {
+      return response.json(
+        responseBuilder(false, 400, "No subscription found")
+      );
+    }
+
+    if (payment.expireAt < new Date()) {
+      return response.json(responseBuilder(false, 400, "Subscription expired"));
+    }
+
+    const subscription = await getSubscriptionById(payment.subscriptionId);
+
+    if (!subscription) {
+      return response.json(
+        responseBuilder(false, 400, "Subscription not found")
+      );
+    }
+
+    return response.json(
+      responseBuilder(true, 200, "Subscription retrieved", subscription)
+    );
   } catch (error) {
     next(error);
   }

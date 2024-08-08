@@ -21,7 +21,7 @@ export async function createPlayListController(
 
     const { name } = createPlayListValidation(request);
 
-    const playList = createPlayList({ name, userId: user.id });
+    const playList = await createPlayList({ name, userId: user.id });
 
     return response.json(
       responseBuilder(true, 200, "PlayList created", playList)

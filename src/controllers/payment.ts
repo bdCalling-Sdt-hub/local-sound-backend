@@ -1,9 +1,17 @@
 import type { Request, Response, NextFunction } from "express";
 import {
   createPaymentValidation,
+  getPaymentChartValidation,
   getPaymentsValidation,
 } from "../validations/payment";
-import { countPayments, createPayment, getPayments } from "../services/payment";
+import {
+  countPayments,
+  createPayment,
+  getPayments,
+  getPaymentsByYear,
+  countEarnings,
+  countSubscribers,
+} from "../services/payment";
 import { getSubscriptionById } from "../services/subscription";
 import responseBuilder from "../utils/responseBuilder";
 import { createNotification } from "../services/notification";
@@ -110,6 +118,77 @@ export async function getPaymentsController(
 
     return response.json(
       responseBuilder(true, 200, "Payments retrieved", payments, pagination)
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getPaymentChartController(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const { year } = getPaymentChartValidation(request);
+
+    const payments = await getPaymentsByYear(year);
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const chartData = months.map((month) => {
+      const monthPayments = payments.filter(
+        (payment) => payment.createdAt.getMonth() === months.indexOf(month)
+      );
+
+      const totalAmount = monthPayments.reduce(
+        (total, payment) => total + payment.amount,
+        0
+      );
+
+      return {
+        month,
+        totalAmount,
+      };
+    });
+
+    return response.json(
+      responseBuilder(true, 200, "Payment chart", chartData)
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getPaymentTotalsController(
+  _: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const totalPayments = await countPayments();
+    const totalEarnings = await countEarnings();
+    const totalSubscribers = await countSubscribers();
+
+    return response.json(
+      responseBuilder(true, 200, "Total Payments", {
+        totalPayments,
+        totalEarnings: totalEarnings._sum.amount,
+        totalSubscribers: totalSubscribers.length,
+      })
     );
   } catch (error) {
     next(error);

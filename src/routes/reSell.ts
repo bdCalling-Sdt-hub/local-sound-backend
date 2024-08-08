@@ -1,10 +1,23 @@
 import express from "express";
-import { onlyUser } from "../middlewares/isAllowedUser";
+import { onlyAdmin, onlyUser } from "../middlewares/isAllowedUser";
 import isValidToken from "../middlewares/isValidToken";
-import { createReSellController } from "../controllers/reSell";
+import {
+  createReSellController,
+  getResellsMusicController,
+  updateResellPriceController,
+} from "../controllers/reSell";
 
 const router = express.Router();
 
-router.route("/").all(isValidToken, onlyUser).post(createReSellController);
+router
+  .route("/")
+  .all(isValidToken)
+  .post(onlyUser, createReSellController)
+  .get(onlyAdmin, getResellsMusicController);
+
+router
+  .route("/:id")
+  .all(isValidToken)
+  .put(onlyAdmin, updateResellPriceController);
 
 export default router;

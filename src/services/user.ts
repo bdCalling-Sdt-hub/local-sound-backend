@@ -35,22 +35,10 @@ export function getUserByEmail(email: string) {
   });
 }
 
-export function getUserById(id: string, takePassword = false) {
+export function getUserById(id: string) {
   return prisma.users.findUnique({
     where: {
       id,
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      type: true,
-      dateOfBirth: true,
-      address: true,
-      number: true,
-      image: true,
-      isVerified: true,
-      password: takePassword,
     },
   });
 }
@@ -102,8 +90,10 @@ export function getUsers(
       address: true,
       number: true,
       image: true,
-      isVerified: true,
     },
+    orderBy:{
+      createdAt: "desc"
+    }
   });
 }
 

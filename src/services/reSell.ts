@@ -55,3 +55,17 @@ export function updateReSells({
     data: changes,
   });
 }
+
+export function getResells({ limit, skip }: { limit: number; skip: number }) {
+  return prisma.reSells.findMany({
+    take: limit,
+    skip,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export function countResells() {
+  return prisma.reSells.count();
+}

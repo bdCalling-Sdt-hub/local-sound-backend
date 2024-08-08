@@ -82,7 +82,7 @@ export async function changePasswordController(
     }
 
     if (oldPassword) {
-      const user = await getUserById(userId, true);
+      const user = await getUserById(userId);
 
       if (!user) {
         return response.json(responseBuilder(false, 400, "User not found"));

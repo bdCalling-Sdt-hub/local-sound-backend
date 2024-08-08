@@ -4,6 +4,7 @@ import isValidToken from "../middlewares/isValidToken";
 import {
   createSubscriptionController,
   deleteSubscriptionController,
+  getCurrentSubscriptionController,
   getSubscriptionsController,
   updateSubscriptionController,
 } from "../controllers/subscription";
@@ -21,5 +22,9 @@ router
   .all(isValidToken)
   .put(onlyAdmin, updateSubscriptionController)
   .delete(onlyAdmin, deleteSubscriptionController);
+
+router
+  .route("/current")
+  .get(isValidToken, allRegisteredUser, getCurrentSubscriptionController);
 
 export default router;

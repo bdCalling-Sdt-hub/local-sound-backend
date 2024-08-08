@@ -183,8 +183,33 @@ export async function verifyOtpController(
         type: user.type,
       });
 
+      const {
+        id,
+        email,
+        name,
+        address,
+        dateOfBirth,
+        image,
+        isVerified,
+        number,
+        type,
+      } = user;
+
       return response.json(
-        responseBuilder(true, 200, "OTP verified successfully", { token, user })
+        responseBuilder(true, 200, "OTP verified successfully", {
+          token,
+          user: {
+            id,
+            name,
+            email,
+            address,
+            dateOfBirth,
+            image,
+            isVerified,
+            number,
+            type,
+          },
+        })
       );
     }
 
