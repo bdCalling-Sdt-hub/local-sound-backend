@@ -32,6 +32,9 @@ export function getPurchasedMusicsByUserId({
   return prisma.purchasedMusics.findMany({
     where: {
       userId,
+      quantity:{
+        gt: 0,
+      }
     },
     take: limit,
     skip,

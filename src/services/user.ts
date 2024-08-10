@@ -71,14 +71,23 @@ export function getAdmin() {
   });
 }
 
-export function getUsers(
-  limit: number,
-  skip: number,
-  type?: "USER" | "ARTIST"
-) {
+export function getUsers({
+  limit,
+  skip,
+  type,
+  name,
+}: {
+  limit: number;
+  skip: number;
+  type?: "USER" | "ARTIST";
+  name?: string;
+}) {
   return prisma.users.findMany({
     where: {
       type,
+      name: {
+        contains: name,
+      },
     },
     take: limit,
     skip,
@@ -91,9 +100,9 @@ export function getUsers(
       number: true,
       image: true,
     },
-    orderBy:{
-      createdAt: "desc"
-    }
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 }
 

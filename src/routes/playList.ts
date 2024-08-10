@@ -5,6 +5,11 @@ import {
   createPlayListController,
   getPlayListsController,
 } from "../controllers/playList";
+import {
+  createPlayListMusicController,
+  deletePlayListMusicController,
+  getPlayListMusicsController,
+} from "../controllers/playListMusic";
 
 const router = express.Router();
 
@@ -13,5 +18,12 @@ router
   .all(isValidToken, onlyUser)
   .get(getPlayListsController)
   .post(createPlayListController);
+
+router
+  .route("/:id")
+  .all(isValidToken, onlyUser)
+  .get(getPlayListMusicsController)
+  .post(createPlayListMusicController)
+  .delete(deletePlayListMusicController);
 
 export default router;

@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { countUsers, getUserById, getUsers, updateUserById } from "../services/user";
+import {
+  countUsers,
+  getUserById,
+  getUsers,
+  updateUserById,
+} from "../services/user";
 import {
   getUserValidation,
   updateUserValidation,
@@ -111,7 +116,7 @@ export async function getUsersController(
   next: NextFunction
 ) {
   try {
-    const { limit, page, type } = getUsersValidation(request);
+    const { limit, page, type,name } = getUsersValidation(request);
 
     const totalUser = await countUsers(type);
 
@@ -126,10 +131,30 @@ export async function getUsersController(
     }
 
     const skip = (page - 1) * limit;
-    const users = await getUsers(limit, skip, type);
+    const users = await getUsers({ limit, skip, type,name });
 
     return response.json(
       responseBuilder(true, 200, "Users retrieved", users, pagination)
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getTotalUserAndArtist(
+  _: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const totalUser = await countUsers("USER");
+    const totalArtist = await countUsers("ARTIST");
+
+    return response.json(
+      responseBuilder(true, 200, "Total user and artist", {
+        totalUser,
+        totalArtist,
+      })
     );
   } catch (error) {
     next(error);

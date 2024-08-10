@@ -96,6 +96,7 @@ export function getUsersValidation(request: Request): {
   page: number;
   limit: number;
   type?: "USER" | "ARTIST";
+  name?: string;
 } {
   const query = request.query;
 
@@ -113,9 +114,14 @@ export function getUsersValidation(request: Request): {
     throw error("Invalid user type", 400);
   }
 
+  if (query.name && typeof query.name !== "string") {
+    throw error("Invalid name", 400);
+  }
+
   return {
     limit,
     page,
+    name: query.name,
     type: query.type as undefined | "USER" | "ARTIST",
   };
 }

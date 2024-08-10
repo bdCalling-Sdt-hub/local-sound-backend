@@ -42,3 +42,11 @@ export function countPlayLists(userId?: string) {
     },
   });
 }
+
+export function getPlayListById(id: string) {
+  return prisma.playLists.findFirst({
+    where: {
+      id,
+    },
+  });
+}

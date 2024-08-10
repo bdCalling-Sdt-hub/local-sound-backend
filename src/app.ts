@@ -4,6 +4,7 @@ import { CustomError } from "./utils/error";
 import routes from "./routes";
 import responseBuilder from "./utils/responseBuilder";
 import morgan from "morgan";
+import cors from "cors";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("combined"));
+app.use(cors());
 
 app.use(routes);
 
@@ -34,12 +36,12 @@ app.use(
         .status(error.status)
         .json(responseBuilder(false, error.status, error.message));
     } else {
-      const randomMessage =
-        errorMessages[Math.floor(Math.random() * errorMessages.length)];
+      const message ="Internal Server Error";
+        // errorMessages[Math.floor(Math.random() * errorMessages.length)];
 
       return response
         .status(500)
-        .json(responseBuilder(false, 500, randomMessage));
+        .json(responseBuilder(false, 500, message));
     }
   }
 );

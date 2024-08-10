@@ -17,7 +17,22 @@ export function createPlayListMusic({
   });
 }
 
-export function getMusicsByPlayListId({
+export function getPlayListMusicByPlayListIdAndMusicId({
+  playListId,
+  musicId,
+}: {
+  playListId: string;
+  musicId: string;
+}) {
+  return prisma.playListMusics.findFirst({
+    where: {
+      playListId,
+      musicId,
+    },
+  });
+}
+
+export function getPlayListMusicsByPlayListId({
   playListId,
   limit,
   skip,
@@ -32,5 +47,28 @@ export function getMusicsByPlayListId({
     },
     take: limit,
     skip,
+  });
+}
+
+export function countPlayListMusic(playListId: string) {
+  return prisma.playListMusics.count({
+    where: {
+      playListId,
+    },
+  });
+}
+
+export function deletePlayListMusic({
+  playListId,
+  musicId,
+}: {
+  playListId: string;
+  musicId: string;
+}) {
+  return prisma.playListMusics.deleteMany({
+    where: {
+      playListId,
+      musicId,
+    },
   });
 }

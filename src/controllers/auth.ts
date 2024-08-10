@@ -328,7 +328,32 @@ export async function getSessionController(
     if (!user) {
       return response.json(responseBuilder(false, 400, "User not found"));
     }
-    return response.json(responseBuilder(true, 200, "User found", user));
+
+    const {
+      id,
+      email,
+      name,
+      address,
+      dateOfBirth,
+      image,
+      isVerified,
+      number,
+      type,
+    } = user;
+
+    return response.json(
+      responseBuilder(true, 200, "User found", {
+        id,
+        name,
+        email,
+        address,
+        dateOfBirth,
+        image,
+        isVerified,
+        number,
+        type,
+      })
+    );
   } catch (error) {
     next(error);
   }

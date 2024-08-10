@@ -3,6 +3,7 @@ import {
   getUsersController,
   updateUserController,
   changePasswordController,
+  getTotalUserAndArtist,
 } from "../controllers/user";
 import upload from "../utils/upload";
 import isValidToken from "../middlewares/isValidToken";
@@ -18,5 +19,7 @@ router
   // .get(getUserController)
   .put(upload.single("image"), updateUserController)
   .patch(changePasswordController);
+
+router.get("/totals", isValidToken, onlyAdmin, getTotalUserAndArtist);
 
 export default router;
