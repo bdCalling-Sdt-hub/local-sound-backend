@@ -1,5 +1,4 @@
 import express, { Request, Response, NextFunction } from "express";
-import { streamingMusic } from "./controllers/stream";
 import { CustomError } from "./utils/error";
 import routes from "./routes";
 import responseBuilder from "./utils/responseBuilder";
@@ -9,7 +8,6 @@ import cors from "cors";
 const app = express();
 
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("combined"));
 app.use(cors());
@@ -36,12 +34,10 @@ app.use(
         .status(error.status)
         .json(responseBuilder(false, error.status, error.message));
     } else {
-      const message ="Internal Server Error";
-        // errorMessages[Math.floor(Math.random() * errorMessages.length)];
+      const message = "Internal Server Error";
+      // errorMessages[Math.floor(Math.random() * errorMessages.length)];
 
-      return response
-        .status(500)
-        .json(responseBuilder(false, 500, message));
+      return response.status(500).json(responseBuilder(false, 500, message));
     }
   }
 );
@@ -50,6 +46,7 @@ app.get("/", (_: Request, response: Response) => {
   response.send("Local Sound");
 });
 
-app.get("/stream", streamingMusic);
-
 export default app;
+
+
+

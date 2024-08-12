@@ -31,11 +31,13 @@ export function getMusics({
   skip,
   name,
   price,
+  url = false,
 }: {
   limit: number;
   skip: number;
   name?: string;
   price: "asc" | "desc";
+  url?: boolean;
 }) {
   return prisma.musics.findMany({
     take: limit,
@@ -50,6 +52,7 @@ export function getMusics({
       image: true,
       name: true,
       price: true,
+      audio: url,
       user: {
         select: {
           name: true,
@@ -57,7 +60,7 @@ export function getMusics({
       },
     },
     orderBy: {
-      price,
+      ...(name ? { price: "asc" } : { createdAt: "asc" }),
     },
   });
 }
@@ -82,5 +85,18 @@ export function updateMusic(
 }
 
 export function getMusicById(musicId: string) {
-  return prisma.musics.findUnique({ where: { id: musicId } });
+  return prisma.musics.findUnique({
+    where: { id: musicId },
+    include: { user: { select: { name: true } } },
+  });
+}
+
+export function getMusicsForRadio(take: number, skip: number) {
+  return prisma.musics.findMany({
+    take,
+    skip,
+    select: {
+      audio: true,
+    },
+  });
 }

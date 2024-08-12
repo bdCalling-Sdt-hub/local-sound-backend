@@ -5,7 +5,7 @@ import error from "./error";
 import dotenv from 'dotenv'; 
 dotenv.config();
 
-const UPLOAD_DIR = process.env.UPLOAD_FOLDER || "public/images/users";
+const UPLOAD_DIR = process.env.UPLOAD_FOLDER || "public";
 const MAX_FILE_SIZE = Number(process.env.MAX_FILE_SIZE) || 20971520; // 20 MB
 
 const storage: StorageEngine = multer.diskStorage({
