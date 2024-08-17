@@ -30,11 +30,11 @@ export async function createReSellController(
     });
 
     if (!purchasedMusic) {
-      return response.json(responseBuilder(false, 400, "Music not found"));
+      return response.status(400).json(responseBuilder(false, 400, "Music not found"));
     }
 
     if (purchasedMusic.quantity < quantity) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "You don't have enough quantity")
       );
     }
@@ -71,7 +71,7 @@ export async function getResellsMusicController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 400, "Page not found"));
+      return response.status(400).json(responseBuilder(false, 400, "Page not found"));
     }
 
     const skip = (page - 1) * limit;

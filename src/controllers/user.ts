@@ -34,7 +34,7 @@ export async function getUserController(
     const user = await getUserById(userId);
 
     if (!user) {
-      return response.json(responseBuilder(false, 400, "User not found"));
+      return response.status(400).json(responseBuilder(false, 400, "User not found"));
     }
 
     return response.json(responseBuilder(true, 200, "User retrieved", user));
@@ -80,20 +80,20 @@ export async function changePasswordController(
       changePasswordValidation(request);
 
     if (tokenData.id !== userId) {
-      return response.json(responseBuilder(false, 401, "Unauthorized"));
+      return response.status(401).json(responseBuilder(false, 401, "Unauthorized"));
     }
 
     if (oldPassword) {
       const user = await getUserById(userId);
 
       if (!user) {
-        return response.json(responseBuilder(false, 400, "User not found"));
+        return response.status(400).json(responseBuilder(false, 400, "User not found"));
       }
 
       const isMatch = await comparePassword(oldPassword, user.password);
 
       if (!isMatch) {
-        return response.json(responseBuilder(false, 400, "Invalid password"));
+        return response.status(400).json(responseBuilder(false, 400, "Invalid password"));
       }
     }
 
@@ -124,7 +124,7 @@ export async function getUsersController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
 
     const skip = (page - 1) * limit;

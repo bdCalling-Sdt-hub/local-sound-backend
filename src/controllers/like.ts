@@ -85,7 +85,7 @@ export async function deleteLikeController(
     const like = await getLikeById(id);
 
     if (!like) {
-      return response.json(responseBuilder(false, 404, "Like not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Like not found"));
     }
 
     if (like.userId !== user.id) {

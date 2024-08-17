@@ -33,7 +33,7 @@ export async function userNotificationsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
     
     const notifications = await getNotificationsByUserId(userId, limit, skip);

@@ -42,7 +42,7 @@ export async function createPlayListMusicController(
     });
 
     if (!PurchasedMusic) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "Music is not purchased by user")
       );
     }
@@ -67,11 +67,11 @@ export async function getPlayListMusicsController(
     const playList = await getPlayListById(playListId);
 
     if (!playList) {
-      return response.json(responseBuilder(false, 404, "PlayList not found"));
+      return response.status(404).json(responseBuilder(false, 404, "PlayList not found"));
     }
 
     if (playList.userId !== user.id) {
-      return response.json(responseBuilder(false, 403, "Forbidden"));
+      return response.status(403).json(responseBuilder(false, 403, "Forbidden"));
     }
 
     const totalPlayListMusics = await countPlayListMusic(playListId);
@@ -83,7 +83,7 @@ export async function getPlayListMusicsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "page not found"));
     }
 
     const skip = (page - 1) * limit;
@@ -113,11 +113,11 @@ export async function deletePlayListMusicController(
     const playList = await getPlayListById(playListId);
 
     if (!playList) {
-      return response.json(responseBuilder(false, 404, "PlayList not found"));
+      return response.status(404).json(responseBuilder(false, 404, "PlayList not found"));
     }
 
     if (playList.userId !== user.id) {
-      return response.json(responseBuilder(false, 403, "Forbidden"));
+      return response.status(403).json(responseBuilder(false, 403, "Forbidden"));
     }
 
     const playListMusic = await getPlayListMusicByPlayListIdAndMusicId({

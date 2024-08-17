@@ -25,7 +25,7 @@ export async function createAdController(
       );
 
     if (payment.expireAt < new Date())
-      return response.json(responseBuilder(false, 400, "Subscription expired"));
+      return response.status(400).json(responseBuilder(false, 400, "Subscription expired"));
 
     const ad = await createAd({
       date,

@@ -27,12 +27,12 @@ export async function createPurchasedMusicController(
     const music = await getMusicById(musicId);
 
     if (!music) {
-      return response.json(responseBuilder(false, 404, "Music not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Music not found"));
     }
 
     if (sellerId) {
       if (sellerId === user.id) {
-        return response.json(
+        return response.status(400).json(
           responseBuilder(false, 400, "You can't buy your own music")
         );
       }
@@ -100,7 +100,7 @@ export async function getPurchasedMusicsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
 
     const purchasedMusics = await getPurchasedMusicsByUserId({

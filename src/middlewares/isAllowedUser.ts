@@ -148,7 +148,7 @@ export async function allRegisteredUser(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.json(responseBuilder(false, 400, "User not found"));
+      return response.status(400).json(responseBuilder(false, 400, "User not found"));
     }
 
     request.user = user;

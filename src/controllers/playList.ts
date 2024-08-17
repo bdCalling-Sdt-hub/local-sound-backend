@@ -50,7 +50,7 @@ export async function getPlayListsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "page not found"));
     }
 
     const skip = (page - 1) * limit;

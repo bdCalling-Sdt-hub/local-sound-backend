@@ -55,11 +55,8 @@ export async function createPaymentController(
     const subscription = await getSubscriptionById(subscriptionId);
 
     if (!subscription) {
-      return response.json({
-        success: false,
-        status: 404,
-        message: "Subscription not found",
-      });
+      return response.json(
+        responseBuilder(false, 404, "Subscription not found"));
     }
 
     const charge = await chargeAmount({
@@ -110,7 +107,7 @@ export async function getPaymentsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
 
     const skip = (page - 1) * limit;

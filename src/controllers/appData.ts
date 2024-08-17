@@ -37,7 +37,7 @@ export async function updateAppDataController(
     const appData = await getAppData();
 
     if (!appData) {
-      return response.json(responseBuilder(false, 404, "App data not found"));
+      return response.status(404).json(responseBuilder(false, 404, "App data not found"));
     }
 
     const newAppData = await updateAppData({
@@ -63,7 +63,7 @@ export async function getAboutController(
     const appData = await getAppData();
 
     if (!appData) {
-      return response.json(
+      return response.status(404).json(
         responseBuilder(false, 404, "About us data not found")
       );
     }

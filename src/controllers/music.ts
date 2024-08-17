@@ -33,7 +33,7 @@ export async function createMusicController(
       );
 
     if (payment.expireAt < new Date())
-      return response.json(responseBuilder(false, 400, "Subscription expired"));
+      return response.status(400).json(responseBuilder(false, 400, "Subscription expired"));
 
     const music = await createMusic({
       audio,
@@ -66,7 +66,7 @@ export async function getMusicsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
 
     const skip = (page - 1) * limit;
@@ -93,7 +93,7 @@ export async function updateMusicController(
     const user = request.user;
 
     if (Object.keys(changes).length === 0) {
-      return response.json(responseBuilder(false, 400, "Nothing to update"));
+      return response.status(400).json(responseBuilder(false, 400, "Nothing to update"));
     }
 
     const music = await getMusicById(musicId);
@@ -112,7 +112,7 @@ export async function updateMusicController(
       );
 
     if (payment.expireAt < new Date())
-      return response.json(responseBuilder(false, 400, "Subscription expired"));
+      return response.status(400).json(responseBuilder(false, 400, "Subscription expired"));
 
     const newMusic = await updateMusic(musicId, changes);
 
@@ -133,7 +133,7 @@ export async function getSingleMusicController(
     const music = await getMusicById(musicId);
 
     if (!music)
-      return response.json(responseBuilder(false, 404, "Music not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Music not found"));
 
     response.json(responseBuilder(true, 200, "Music", music));
   } catch (error) {

@@ -62,7 +62,7 @@ export async function getSubscriptionsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
 
     return response.json(
@@ -96,7 +96,7 @@ export async function updateSubscriptionController(
     });
 
     if (!subscription) {
-      return response.json(
+      return response.status(404).json(
         responseBuilder(false, 404, "Subscription not found")
       );
     }
@@ -171,7 +171,7 @@ export async function getSubscriptionByIdController(
     const subscription = await getSubscriptionById(subscriptionId);
 
     if (!subscription || subscription.isDeleted === true) {
-      return response.json(
+      return response.status(404).json(
         responseBuilder(false, 404, "Subscription not found")
       );
     }

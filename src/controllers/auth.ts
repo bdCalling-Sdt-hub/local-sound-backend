@@ -81,7 +81,7 @@ export async function loginController(
     const passwordMatch = await comparePassword(password, user.password);
 
     if (!passwordMatch) {
-      return response.json(responseBuilder(false, 400, "Invalid password"));
+      return response.status(400).json(responseBuilder(false, 400, "Invalid password"));
     }
 
     if (!user.isVerified) {
@@ -157,7 +157,7 @@ export async function verifyOtpController(
     const user = await getUserById(userId);
 
     if (!user) {
-      return response.json(responseBuilder(false, 400, "User not found"));
+      return response.status(400).json(responseBuilder(false, 400, "User not found"));
     }
 
     const otp = await getLastOtpByUserId(userId);
@@ -169,7 +169,7 @@ export async function verifyOtpController(
     }
 
     if (otp.expiredAt < new Date()) {
-      return response.json(responseBuilder(false, 400, "OTP expired"));
+      return response.status(400).json(responseBuilder(false, 400, "OTP expired"));
     }
 
     if (otp.code === code) {
@@ -213,7 +213,7 @@ export async function verifyOtpController(
       );
     }
 
-    return response.json(responseBuilder(false, 400, "Invalid OTP"));
+    return response.status(400).json(responseBuilder(false, 400, "Invalid OTP"));
   } catch (error) {
     next(error);
   }
@@ -230,7 +230,7 @@ export async function resendOTPController(
     const user = await getUserById(userId);
 
     if (!user) {
-      return response.json(responseBuilder(false, 400, "User not found"));
+      return response.status(400).json(responseBuilder(false, 400, "User not found"));
     }
 
     const prevuesOtp = await getLastOtpByUserId(userId);
@@ -281,7 +281,7 @@ export async function forgotController(
     const { email } = forgotPasswordValidation(request);
     const user = await getUserByEmail(email);
     if (!user) {
-      return response.json(responseBuilder(false, 400, "User not found"));
+      return response.status(400).json(responseBuilder(false, 400, "User not found"));
     }
 
     const prevuesOtp = await getLastOtpByUserId(user.id);
@@ -326,7 +326,7 @@ export async function getSessionController(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.json(responseBuilder(false, 400, "User not found"));
+      return response.status(400).json(responseBuilder(false, 400, "User not found"));
     }
 
     const {

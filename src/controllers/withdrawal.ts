@@ -28,7 +28,7 @@ export async function createWithdrawalController(
       createWithdrawalValidation(request);
 
     if (user.balance < amount) {
-      return response.json(responseBuilder(false, 400, "Insufficient balance"));
+      return response.status(400).json(responseBuilder(false, 400, "Insufficient balance"));
     }
 
     const withdrawal = await createWithdrawal({
@@ -68,7 +68,7 @@ export async function getWithdrawalsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 404, "Page not found"));
+      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
     }
 
     const skip = (page - 1) * limit;
@@ -98,7 +98,7 @@ export async function updateWithdrawalStatusController(
     const withdrawal = await getWithdrawalById(withdrawalId);
 
     if (!withdrawal) {
-      return response.json(responseBuilder(false, 400, "Withdrawal not found"));
+      return response.status(400).json(responseBuilder(false, 400, "Withdrawal not found"));
     }
 
     if (withdrawal.status !== "PENDING") {
