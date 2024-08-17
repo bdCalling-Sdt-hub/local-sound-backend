@@ -12,6 +12,8 @@ app.use(express.json());
 app.use(morgan("combined"));
 app.use(cors());
 
+app.use(express.static("public"));
+
 app.use(routes);
 
 const errorMessages = [

@@ -52,15 +52,12 @@ export async function updateUserController(
     const { tokenData, userData, userId } = updateUserValidation(request);
 
     if (tokenData.id !== userId) {
-      return response.json({
-        success: false,
-        status: 401,
-        message: "Unauthorized",
-      });
+      return response.status(401).json(
+        responseBuilder(false, 401, "Unauthorized"));
     }
 
     if (Object.keys(userData).length === 0) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "Provide data not allowed to update")
       );
     }

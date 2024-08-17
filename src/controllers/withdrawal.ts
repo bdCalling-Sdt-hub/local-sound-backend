@@ -14,6 +14,7 @@ import {
 } from "../validations/withdrawal";
 import paginationBuilder from "../utils/paginationBuilder";
 import { createNotification } from "../services/notification";
+import { updateBalance, updateUserById } from "../services/user";
 
 export async function createWithdrawalController(
   request: Request,
@@ -106,11 +107,14 @@ export async function updateWithdrawalStatusController(
       );
     }
 
-    await updateWithdrawal(withdrawalId, status);
+    const newWithdrawal = await updateWithdrawal(withdrawalId, status);
+
+    if (newWithdrawal.status === "REJECTED")
+      await updateBalance(withdrawal.userId, withdrawal.amount);
 
     await createNotification({
       userId: withdrawal.userId,
-      message: `Your withdrawal of ${withdrawal.amount} has been ${status}`,
+      message: `Your withdrawal of ${withdrawal.amount} has been ${newWithdrawal.status}`,
     });
 
     return response.json(

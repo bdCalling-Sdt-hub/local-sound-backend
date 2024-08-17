@@ -53,7 +53,7 @@ model Subscriptions {
   name      String
   price     Float
   duration  Int
-  Benefits  String[]
+  benefits  String[]
   isDeleted Boolean    @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

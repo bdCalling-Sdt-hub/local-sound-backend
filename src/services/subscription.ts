@@ -6,18 +6,18 @@ export function createSubscription({
   name,
   duration,
   price,
-  Benefits,
+  benefits,
 }: {
   name: string;
   duration: number;
   price: number;
-  Benefits: string[];
+  benefits: string[];
 }) {
   return prisma.subscriptions.create({
     data: {
       name,
       duration,
-      Benefits,
+      benefits,
       price,
     },
   });
@@ -38,7 +38,7 @@ export function getSubscriptions(limit: number, skip: number) {
       name: true,
       price: true,
       duration: true,
-      Benefits: true,
+      benefits: true,
     },
   });
 }
@@ -57,12 +57,12 @@ export function updateSubscription(
     name,
     duration,
     price,
-    Benefits,
+    benefits,
   }: {
     name?: string;
     duration?: number;
     price?: number;
-    Benefits?: string[];
+    benefits?: string[];
   }
 ) {
   return prisma.subscriptions.update({
@@ -73,14 +73,14 @@ export function updateSubscription(
       name,
       duration,
       price,
-      Benefits,
+      benefits,
     },
     select: {
       id: true,
       name: true,
       price: true,
       duration: true,
-      Benefits: true,
+      benefits: true,
     },
   });
 }

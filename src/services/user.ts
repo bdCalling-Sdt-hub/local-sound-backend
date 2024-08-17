@@ -99,6 +99,7 @@ export function getUsers({
       address: true,
       number: true,
       image: true,
+      createdAt: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -110,6 +111,19 @@ export function countUsers(type?: "USER" | "ARTIST") {
   return prisma.users.count({
     where: {
       type,
+    },
+  });
+}
+
+export function updateBalance(id: string, amount: number) {
+  return prisma.users.update({
+    where: {
+      id,
+    },
+    data: {
+      balance: {
+        increment: amount,
+      },
     },
   });
 }

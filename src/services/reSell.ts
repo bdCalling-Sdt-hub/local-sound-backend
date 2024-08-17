@@ -53,6 +53,13 @@ export function updateReSells({
       id,
     },
     data: changes,
+    include:{
+      music:{
+        select:{
+          name:true
+        }
+      }
+    }
   });
 }
 
@@ -62,6 +69,18 @@ export function getResells({ limit, skip }: { limit: number; skip: number }) {
     skip,
     orderBy: {
       createdAt: "desc",
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+      music: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 }

@@ -37,6 +37,7 @@ const fileFilter = (
   
   const extName = path.extname(file.originalname).toLowerCase();
   const isAllowedFileType = allowedFileTypes.includes(extName.substring(1));
+  
   if (!isAllowedFileType) {
     return cb(
       error(`Only ${allowedFileTypes.join(", ")} files are allowed`, 400)

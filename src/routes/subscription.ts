@@ -5,6 +5,7 @@ import {
   createSubscriptionController,
   deleteSubscriptionController,
   getCurrentSubscriptionController,
+  getSubscriptionByIdController,
   getSubscriptionsController,
   updateSubscriptionController,
 } from "../controllers/subscription";
@@ -20,6 +21,7 @@ router
 router
   .route("/:id")
   .all(isValidToken)
+  .get(getSubscriptionByIdController)
   .put(onlyAdmin, updateSubscriptionController)
   .delete(onlyAdmin, deleteSubscriptionController);
 

@@ -13,6 +13,7 @@ import {
   updateReSells,
 } from "../services/reSell";
 import paginationBuilder from "../utils/paginationBuilder";
+import { createNotification } from "../services/notification";
 
 export async function createReSellController(
   request: Request,
@@ -93,11 +94,16 @@ export async function updateResellPriceController(
   try {
     const { id, price } = updateResellPriceValidation(request);
 
-    await updateReSells({
+    const resell = await updateReSells({
       id,
       changes: {
         price,
       },
+    });
+
+    createNotification({
+      userId: resell.userId,
+      message: `Your music ${resell.music.name} price has been updated to ${price} by Admin`,
     });
 
     return response.json(responseBuilder(true, 200, "updated successfully"));

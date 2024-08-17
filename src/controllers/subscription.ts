@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   createSubscriptionValidation,
   deleteSubscriptionValidation,
+  getSubscriptionByIdValidation,
   getSubscriptionsValidation,
   updateSubscriptionValidation,
 } from "../validations/subscription";
@@ -23,14 +24,14 @@ export async function createSubscriptionController(
   next: NextFunction
 ) {
   try {
-    const { name, duration, price, Benefits } =
+    const { name, duration, price, benefits } =
       createSubscriptionValidation(request);
 
     const subscription = await createSubscription({
       name,
       duration,
       price,
-      Benefits,
+      benefits,
     });
 
     return response.json(
@@ -84,14 +85,14 @@ export async function updateSubscriptionController(
   next: NextFunction
 ) {
   try {
-    const { name, duration, price, Benefits, subscriptionId } =
+    const { name, duration, price, benefits, subscriptionId } =
       updateSubscriptionValidation(request);
 
     const subscription = await updateSubscription(subscriptionId, {
       name,
       duration,
       price,
-      Benefits,
+      benefits,
     });
 
     if (!subscription) {
@@ -154,6 +155,35 @@ export async function getCurrentSubscriptionController(
 
     return response.json(
       responseBuilder(true, 200, "Subscription retrieved", subscription)
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getSubscriptionByIdController(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const { subscriptionId } = getSubscriptionByIdValidation(request);
+    const subscription = await getSubscriptionById(subscriptionId);
+
+    if (!subscription || subscription.isDeleted === true) {
+      return response.json(
+        responseBuilder(false, 404, "Subscription not found")
+      );
+    }
+
+    return response.json(
+      responseBuilder(true, 200, "Subscription retrieved", {
+        id: subscription.id,
+        name: subscription.name,
+        price: subscription.price,
+        duration: subscription.duration,
+        benefits: subscription.benefits,
+      })
     );
   } catch (error) {
     next(error);

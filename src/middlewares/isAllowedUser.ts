@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { TokenData } from "../types/token";
 import { getUserById } from "../services/user";
+import responseBuilder from "../utils/responseBuilder";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -19,22 +20,18 @@ export async function onlyAdmin(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.json({
-        success: false,
-        status: 400,
-        message: "Invalid Token User not found",
-      });
+      return response.json(
+        responseBuilder(false, 400, "Invalid Token User not found")
+      );
     }
 
     if (user.type !== "ADMIN") {
-      return response.json({
-        success: false,
-        status: 401,
-        message: "Unauthorized Only Admin can access",
-      });
+      return response.json(
+        responseBuilder(false, 401, "Unauthorized Only Admin can access")
+      );
     }
 
-    request.user=user;
+    request.user = user;
 
     next();
   } catch (error) {
@@ -54,22 +51,18 @@ export async function onlyUser(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.json({
-        success: false,
-        status: 400,
-        message: "Invalid Token User not found",
-      });
+      return response.json(
+        responseBuilder(false, 400, "Invalid Token User not found")
+      );
     }
 
     if (user.type !== "USER") {
-      return response.json({
-        success: false,
-        status: 401,
-        message: "Unauthorized Only User can access",
-      });
+      return response.json(
+        responseBuilder(false, 401, "Unauthorized Only User can access")
+      );
     }
 
-    request.user=user
+    request.user = user;
 
     next();
   } catch (error) {
@@ -89,19 +82,15 @@ export async function onlyArtist(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.json({
-        success: false,
-        status: 400,
-        message: "Invalid Token User not found",
-      });
+      return response.json(
+        responseBuilder(false, 400, "Invalid Token User not found")
+      );
     }
 
     if (user.type !== "ARTIST") {
-      return response.json({
-        success: false,
-        status: 401,
-        message: "Unauthorized Only Artist can access",
-      });
+      return response.json(
+        responseBuilder(false, 401, "Unauthorized Only Artist can access")
+      );
     }
 
     request.user = user;
@@ -159,11 +148,7 @@ export async function allRegisteredUser(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.json({
-        success: false,
-        status: 400,
-        message: "Invalid Token User not found",
-      });
+      return response.json(responseBuilder(false, 400, "User not found"));
     }
 
     request.user = user;

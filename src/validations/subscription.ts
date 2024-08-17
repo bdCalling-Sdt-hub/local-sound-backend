@@ -6,7 +6,7 @@ export function createSubscriptionValidation(request: Request): {
   name: string;
   duration: number;
   price: number;
-  Benefits: string[];
+  benefits: string[];
 } {
   const body = request.body;
 
@@ -16,15 +16,15 @@ export function createSubscriptionValidation(request: Request): {
 
   if (!body.price) throw error("Price is required", 400);
 
-  if (!body.Benefits) throw error("Benefits is required", 400);
+  if (!body.benefits) throw error("Benefits is required", 400);
 
-  if (!Array.isArray(body.Benefits))
+  if (!Array.isArray(body.benefits))
     throw error("Benefits should be an array", 400);
 
-  if (body.Benefits.length === 0)
+  if (body.benefits.length === 0)
     throw error("At least one benefit is required", 400);
 
-  body.Benefits.forEach((benefit: string) => {
+  body.benefits.forEach((benefit: string) => {
     if (typeof benefit !== "string")
       throw error("Benefits should be an array of strings", 400);
   });
@@ -54,7 +54,7 @@ export function createSubscriptionValidation(request: Request): {
     name: body.name,
     duration: body.duration,
     price: Number(body.price.toFixed(2)),
-    Benefits: body.Benefits,
+    benefits: body.benefits,
   };
 }
 
@@ -81,7 +81,7 @@ export function updateSubscriptionValidation(request: Request): {
   name?: string;
   duration?: number;
   price?: number;
-  Benefits?: string[];
+  benefits?: string[];
   subscriptionId: string;
 } {
   const body = request.body;
@@ -94,7 +94,7 @@ export function updateSubscriptionValidation(request: Request): {
   if (!isValidObjectId(params.id)) {
     throw error("Subscription id is invalid", 400);
   }
-  
+
   if (body.name && typeof body.name !== "string") {
     throw error("Name should be a string", 400);
   }
@@ -107,16 +107,16 @@ export function updateSubscriptionValidation(request: Request): {
     throw error("Price should be a number", 400);
   }
 
-  if (body.Benefits && !Array.isArray(body.Benefits)) {
+  if (body.benefits && !Array.isArray(body.benefits)) {
     throw error("Benefits should be an array", 400);
   }
 
-  if (body.Benefits && body.Benefits.length === 0) {
+  if (body.benefits && body.benefits.length === 0) {
     throw error("At least one benefit is required", 400);
   }
 
-  if (body.Benefits) {
-    body.Benefits.forEach((benefit: string) => {
+  if (body.benefits) {
+    body.benefits.forEach((benefit: string) => {
       if (typeof benefit !== "string") {
         throw error("Benefits should be an array of strings", 400);
       }
@@ -126,8 +126,11 @@ export function updateSubscriptionValidation(request: Request): {
   if (body.name && body.name.trim().length === 0) {
     throw error("Name should not be empty", 400);
   }
+  if (!Number.isInteger(body.price * 100)) {
+    throw error("Price should have two decimal places", 400);
+  }
 
-  if (body.price && (body.price <= 0 || !Number.isInteger(body.price * 100))) {
+  if (body.price && body.price <= 0) {
     throw error("Price should be a positive number", 400);
   }
 
@@ -139,12 +142,30 @@ export function updateSubscriptionValidation(request: Request): {
     name: body.name,
     duration: body.duration,
     price: body.price,
-    Benefits: body.Benefits,
+    benefits: body.benefits,
     subscriptionId: params.id,
   };
 }
 
 export function deleteSubscriptionValidation(request: Request) {
+  const params = request.params;
+
+  if (!params.id || typeof params.id !== "string") {
+    throw error("Subscription id is required and must be a string", 400);
+  }
+
+  if (!isValidObjectId(params.id)) {
+    throw error("Subscription id is invalid", 400);
+  }
+
+  return {
+    subscriptionId: params.id,
+  };
+}
+
+export function getSubscriptionByIdValidation(request: Request): {
+  subscriptionId: string;
+} {
   const params = request.params;
 
   if (!params.id || typeof params.id !== "string") {
