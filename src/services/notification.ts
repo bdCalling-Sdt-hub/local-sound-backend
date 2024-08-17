@@ -28,6 +28,9 @@ export function getNotificationsByUserId(
     },
     take: limit,
     skip,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 }
 
