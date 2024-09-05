@@ -32,12 +32,26 @@ export async function createAd({
   });
 }
 
-export function getAds(limit: number, skip: number) {
+export function getAds({
+  limit,
+  skip,
+  userId,
+  date,
+}: {
+  limit: number;
+  skip: number;
+  userId?: string;
+  date?: string;
+}) {
   return prisma.ads.findMany({
     take: limit,
     skip,
     orderBy: {
       createdAt: "desc",
+    },
+    where: {
+      userId,
+      date,
     },
     include: {
       user: {
@@ -49,6 +63,6 @@ export function getAds(limit: number, skip: number) {
   });
 }
 
-export function countAds() {
-  return prisma.ads.count();
+export function countAds({ userId, date }: { userId?: string; date?: string }) {
+  return prisma.ads.count({ where: { userId, date } });
 }

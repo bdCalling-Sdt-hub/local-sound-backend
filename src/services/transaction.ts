@@ -128,3 +128,21 @@ export function createTransaction({
     }),
   ]);
 }
+
+export function getTransactionsByUser({ userId }: { userId: string }) {
+  const currentDate = new Date();
+  const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
+
+  return prisma.transactions.aggregate({
+    where: {
+      sellerId: userId,
+      createdAt: {
+        gte: lastMonth,
+        lt: currentDate,
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  })
+}

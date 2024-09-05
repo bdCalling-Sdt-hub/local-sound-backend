@@ -10,6 +10,10 @@ export function createWithdrawalValidation(request: Request): {
 } {
   const body = request.body;
 
+  console.log(request.headers);
+
+  console.log(body);
+
   if (!body.amount || typeof body.amount !== "number") {
     throw error("Amount is required and must be a number", 400);
   }
@@ -61,7 +65,7 @@ export function getWithdrawalsValidation(request: Request): {
   return {
     limit,
     page,
-  };
+  };    
 }
 
 export function updateWithdrawalStatusValidation(request: Request): {

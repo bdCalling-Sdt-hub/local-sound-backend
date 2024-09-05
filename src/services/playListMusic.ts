@@ -47,6 +47,20 @@ export function getPlayListMusicsByPlayListId({
     },
     take: limit,
     skip,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      music: {
+        include: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 

@@ -55,9 +55,9 @@ export async function getMusicsController(
   next: NextFunction
 ) {
   try {
-    const { limit, name, page, price } = getMusicsValidation(request);
+    const { limit, name, page, price,userId } = getMusicsValidation(request);
 
-    const totalMusics = await countMusic(name);
+    const totalMusics = await countMusic({ name,userId });
 
     const pagination = paginationBuilder({
       totalData: totalMusics,
@@ -75,6 +75,7 @@ export async function getMusicsController(
       price,
       skip,
       name,
+      userId,
     });
 
     response.json(responseBuilder(true, 200, "Musics", musics, pagination));

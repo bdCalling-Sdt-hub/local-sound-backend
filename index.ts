@@ -27,13 +27,14 @@ const musicData: MusicData = {
   totalTake: 0,
   index: 0,
 };
-
+   
 const PORT = 8000;
 
 const server = http.createServer();
 
 server.on("request", (req, res) => {
   if (req.url === "/stream") {
+    console.log("Req in Stream")
     streamingMusic(req, res);
   } else {
     app(req, res);
@@ -71,7 +72,7 @@ const controlledStream = new PassThrough();
   if (musicData.index === 0) {
     if (musicData.totalTake === musicData.totalMusic) {
       musicData.totalTake = 0;
-      musicData.totalMusic = await countMusic();
+      musicData.totalMusic = await countMusic({});
     }
 
     musicData.musics = await getMusics({

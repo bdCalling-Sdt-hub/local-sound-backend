@@ -44,6 +44,7 @@ export function getPurchasedMusicsByUserId({
           id: true,
           name: true,
           image: true,
+          price: true,
           user: {
             select: {
               name: true,

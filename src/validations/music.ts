@@ -61,6 +61,7 @@ export function getMusicsValidation(request: Request): {
   page: number;
   name?: string;
   price: "asc" | "desc";
+  userId?: string;
 } {
   const query = request.query;
 
@@ -86,11 +87,20 @@ export function getMusicsValidation(request: Request): {
     throw error("Price must be asc or desc", 400);
   }
 
+  if(query.userId && typeof query.userId !== "string") {
+    throw error("User ID must be string", 400);
+  }
+
+  if(query.userId && !isValidObjectId(query.userId)) {
+    throw error("Invalid user ID", 400);
+  }
+
   return {
     limit,
     page,
     name: query.name,
     price: query.price,
+    userId: query.userId,
   };
 }
 

@@ -5,6 +5,7 @@ import {
   getWithdrawalsController,
   createWithdrawalController,
   updateWithdrawalStatusController,
+  getBalanceController,
 } from "../controllers/withdrawal";
 
 const router = express.Router();
@@ -14,6 +15,10 @@ router
   .all(isValidToken, allRegisteredUser)
   .get(getWithdrawalsController)
   .post(createWithdrawalController);
+
+router
+  .route("/balance")
+  .get(isValidToken, allRegisteredUser, getBalanceController);
 
 router
   .route("/:id")

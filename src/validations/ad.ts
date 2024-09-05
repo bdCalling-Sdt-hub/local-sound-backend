@@ -1,5 +1,6 @@
 import { Request } from "express";
 import error from "../utils/error";
+import { isValidObjectId } from "../utils/validators";
 
 export function createAdValidation(request: Request): {
   date: string;
@@ -42,6 +43,8 @@ export function createAdValidation(request: Request): {
 export function getAdsValidation(request: Request): {
   limit: number;
   page: number;
+  userId?: string;
+  date?: string;
 } {
   const query = request.query;
 
@@ -55,8 +58,22 @@ export function getAdsValidation(request: Request): {
 
   if (limit < 1) limit = 1;
 
+  if(query.userId && typeof query.userId !== "string") {
+    throw error("User ID must be string", 400);
+  }
+
+  if(query.userId && !isValidObjectId(query.userId)) {
+    throw error("Invalid user ID", 400);
+  }
+
+  if(query.date && typeof query.date !== "string") {
+    throw error("Date must be string", 400);
+  }
+
   return {
     limit,
     page,
+    userId: query.userId,
+    date: query.date
   };
 }

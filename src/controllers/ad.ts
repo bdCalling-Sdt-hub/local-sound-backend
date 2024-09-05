@@ -25,7 +25,9 @@ export async function createAdController(
       );
 
     if (payment.expireAt < new Date())
-      return response.status(400).json(responseBuilder(false, 400, "Subscription expired"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "Subscription expired"));
 
     const ad = await createAd({
       date,
@@ -49,9 +51,9 @@ export async function getAdsController(
   next: NextFunction
 ) {
   try {
-    const { limit, page } = getAdsValidation(request);
+    const { limit, page, userId, date } = getAdsValidation(request);
 
-    const totalAd = await countAds();
+    const totalAd = await countAds({ userId, date });
 
     const pagination = paginationBuilder({
       currentPage: page,
@@ -59,15 +61,13 @@ export async function getAdsController(
       totalData: totalAd,
     });
 
-    if(page > pagination.totalPage) {
-      return response.json(
-        responseBuilder(false, 400, "Page not found")
-      );
+    if (page > pagination.totalPage) {
+      return response.json(responseBuilder(false, 400, "Page not found"));
     }
 
     const skip = (page - 1) * limit;
 
-    const ads = await getAds(limit, skip);
+    const ads = await getAds({ limit, skip, userId, date });
 
     return response.json(
       responseBuilder(true, 200, "Ads retrieved", ads, pagination)

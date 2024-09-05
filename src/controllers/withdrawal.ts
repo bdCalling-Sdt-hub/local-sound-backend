@@ -14,7 +14,8 @@ import {
 } from "../validations/withdrawal";
 import paginationBuilder from "../utils/paginationBuilder";
 import { createNotification } from "../services/notification";
-import { updateBalance, updateUserById } from "../services/user";
+import { updateBalance } from "../services/user";
+import { getTransactionsByUser } from "../services/transaction";
 
 export async function createWithdrawalController(
   request: Request,
@@ -119,6 +120,27 @@ export async function updateWithdrawalStatusController(
 
     return response.json(
       responseBuilder(true, 200, "Withdrawal status updated")
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getBalanceController(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const user = request.user;
+
+    const lastMountEarning = await getTransactionsByUser({ userId: user.id });
+
+    return response.json(
+      responseBuilder(true, 200, "User balance retrieved", {
+        balance: user.balance,
+        lastMountEarning: lastMountEarning._sum.amount || 0,
+      })
     );
   } catch (error) {
     next(error);

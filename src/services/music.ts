@@ -31,6 +31,7 @@ export function getMusics({
   skip,
   name,
   price,
+  userId,
   url = false,
 }: {
   limit: number;
@@ -38,6 +39,7 @@ export function getMusics({
   name?: string;
   price: "asc" | "desc";
   url?: boolean;
+  userId?: string;
 }) {
   return prisma.musics.findMany({
     take: limit,
@@ -46,27 +48,23 @@ export function getMusics({
       name: {
         startsWith: name,
       },
+      userId,
     },
-    select: {
-      id: true,
-      image: true,
-      name: true,
-      price: true,
-      audio: url,
-      user: {
-        select: {
-          name: true,
-        },
-      },
-    },
+    include: { user: { select: { name: true } } },   
     orderBy: {
-      ...(name ? { price: "asc" } : { createdAt: "asc" }),
+      ...(name ? { price } : { createdAt: "desc" }),
     },
   });
 }
 
-export function countMusic(name?: string) {
-  return prisma.musics.count({ where: { name: { startsWith: name } } });
+export function countMusic({
+  name,
+  userId,
+}: {
+  name?: string;
+  userId?: string;
+}) {
+  return prisma.musics.count({ where: { name: { startsWith: name }, userId } });
 }
 
 export function updateMusic(

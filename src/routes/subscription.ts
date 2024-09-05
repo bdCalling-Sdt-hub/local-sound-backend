@@ -18,15 +18,18 @@ router
   .post(onlyAdmin, createSubscriptionController)
   .get(allRegisteredUser, getSubscriptionsController);
 
+router.get(
+  "/current",
+  isValidToken,
+  allRegisteredUser,
+  getCurrentSubscriptionController
+);
+
 router
   .route("/:id")
   .all(isValidToken)
   .get(getSubscriptionByIdController)
   .put(onlyAdmin, updateSubscriptionController)
   .delete(onlyAdmin, deleteSubscriptionController);
-
-router
-  .route("/current")
-  .get(isValidToken, allRegisteredUser, getCurrentSubscriptionController);
 
 export default router;
