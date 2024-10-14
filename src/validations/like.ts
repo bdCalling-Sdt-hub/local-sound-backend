@@ -1,6 +1,6 @@
 import type { Request } from "express";
 import error from "../utils/error";
-import { isBooleanObject } from "util/types";
+import { isValidObjectId } from "../utils/validators";
 
 export function createLikeValidation(request: Request): {
   musicId: string;
@@ -11,8 +11,8 @@ export function createLikeValidation(request: Request): {
     throw error("Music id is required and must be a string", 400);
   }
 
-  if(isBooleanObject(body.musicId)){
-    throw error("Music id must be a string", 400);
+  if (!isValidObjectId(body.musicId)) {
+    throw error("Invalid Music Id", 400);
   }
 
   return {
@@ -42,18 +42,18 @@ export function getLikesValidation(request: Request): {
   };
 }
 
-export function deleteLikeValidation(request:Request){
+export function deleteLikeValidation(request: Request) {
   const params = request.params;
 
-  if(!params.id || typeof params.id !== "string"){
+  if (!params.id || typeof params.id !== "string") {
     throw error("Id is required and must be a string", 400);
   }
 
-  if(isBooleanObject(params.id)){
+  if (isValidObjectId(params.id)) {
     throw error("Id must be a string", 400);
   }
 
   return {
-    id: params.id
-  }
+    id: params.id,
+  };
 }

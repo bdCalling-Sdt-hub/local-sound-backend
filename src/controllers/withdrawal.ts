@@ -14,7 +14,7 @@ import {
 } from "../validations/withdrawal";
 import paginationBuilder from "../utils/paginationBuilder";
 import { createNotification } from "../services/notification";
-import { updateBalance } from "../services/user";
+import { decrementBalance, updateBalance } from "../services/user";
 import { getTransactionsByUser } from "../services/transaction";
 
 export async function createWithdrawalController(
@@ -29,7 +29,9 @@ export async function createWithdrawalController(
       createWithdrawalValidation(request);
 
     if (user.balance < amount) {
-      return response.status(400).json(responseBuilder(false, 400, "Insufficient balance"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "Insufficient balance"));
     }
 
     const withdrawal = await createWithdrawal({
@@ -40,8 +42,11 @@ export async function createWithdrawalController(
       userId: user.id,
     });
 
+    
+    await decrementBalance(user.id, amount);
+
     return response.json(
-      responseBuilder(true, 200, "Withdrawal created", withdrawal[0])
+      responseBuilder(true, 200, "Withdrawal created", withdrawal)
     );
   } catch (error) {
     next(error);
@@ -69,7 +74,9 @@ export async function getWithdrawalsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "Page not found"));
     }
 
     const skip = (page - 1) * limit;
@@ -99,13 +106,15 @@ export async function updateWithdrawalStatusController(
     const withdrawal = await getWithdrawalById(withdrawalId);
 
     if (!withdrawal) {
-      return response.status(400).json(responseBuilder(false, 400, "Withdrawal not found"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "Withdrawal not found"));
     }
 
     if (withdrawal.status !== "PENDING") {
-      return response.json(
-        responseBuilder(false, 400, "Withdrawal already processed")
-      );
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "Withdrawal already processed"));
     }
 
     const newWithdrawal = await updateWithdrawal(withdrawalId, status);

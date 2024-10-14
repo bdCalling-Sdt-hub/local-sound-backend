@@ -13,29 +13,14 @@ export function createReSell({
   price: number;
   quantity: number;
 }) {
-  return prisma.$transaction([
-    prisma.reSells.create({
-      data: {
-        userId,
-        musicId,
-        price,
-        quantity,
-      },
-    }),
-    prisma.purchasedMusics.update({
-      where: {
-        userId_musicId: {
-          userId,
-          musicId,
-        },
-      },
-      data: {
-        quantity: {
-          decrement: quantity,
-        },
-      },
-    }),
-  ]);
+  return prisma.reSells.create({
+    data: {
+      userId,
+      musicId,
+      price,
+      quantity,
+    },
+  });
 }
 
 export function updateReSells({
@@ -53,20 +38,33 @@ export function updateReSells({
       id,
     },
     data: changes,
-    include:{
-      music:{
-        select:{
-          name:true
-        }
-      }
-    }
+    include: {
+      music: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 }
 
-export function getResells({ limit, skip }: { limit: number; skip: number }) {
+export function getResells({
+  limit,
+  skip,
+  name,
+}: {
+  limit: number;
+  skip: number;
+  name?: string;
+}) {
   return prisma.reSells.findMany({
     take: limit,
     skip,
+    where: {
+      music: {
+        name: { startsWith: name },
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -85,6 +83,31 @@ export function getResells({ limit, skip }: { limit: number; skip: number }) {
   });
 }
 
-export function countResells() {
-  return prisma.reSells.count();
+export function countResells({ name }: { name?: string }) {
+  return prisma.reSells.count({
+    where: {
+      music: {
+        name: { startsWith: name },
+      },
+    },
+  });
+}
+
+export function updateReSellMusicQuantity(
+  userId: string,
+  { musicId, quantity }: { musicId: string; quantity: number }
+) {
+  return prisma.reSells.update({
+    where: {
+      userId_musicId: {
+        userId,
+        musicId,
+      },
+    },
+    data: {
+      quantity: {
+        decrement: quantity,
+      },
+    },
+  });
 }

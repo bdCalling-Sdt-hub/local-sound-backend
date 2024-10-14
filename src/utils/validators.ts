@@ -14,6 +14,7 @@ export function validateEmail(email: string) {
 }
 
 export function isValidObjectId(id: string): boolean {
-    const objectIdPattern = /^[a-fA-F0-9]{24}$/;
-    return objectIdPattern.test(id);
-  }
+  if (id.length !== 24) return false;
+  const objectIdPattern = /^[a-fA-F0-9]{24}$/;
+  return objectIdPattern.test(id);
+}

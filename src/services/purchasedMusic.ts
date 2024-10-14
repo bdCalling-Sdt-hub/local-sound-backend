@@ -11,11 +11,22 @@ export function createPurchasedMusic({
   musicId: string;
   quantity: number;
 }) {
-  return prisma.purchasedMusics.create({
-    data: {
+  return prisma.purchasedMusics.upsert({
+    where: {
+      userId_musicId: {
+        userId,
+        musicId,
+      },
+    },
+    create: {
       userId,
       musicId,
       quantity,
+    },
+    update: {
+      quantity: {
+        increment: quantity,
+      },
     },
   });
 }
@@ -32,19 +43,15 @@ export function getPurchasedMusicsByUserId({
   return prisma.purchasedMusics.findMany({
     where: {
       userId,
-      quantity:{
+      quantity: {
         gt: 0,
-      }
+      },
     },
     take: limit,
     skip,
     include: {
       music: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          price: true,
+        include: {
           user: {
             select: {
               name: true,
@@ -92,6 +99,30 @@ export function getPurchasedMusicByUserIdAndMusicId({
     where: {
       userId,
       musicId,
+    },
+  });
+}
+
+export function decrementPurchasedMusicQuantity({
+  userId,
+  musicId,
+  quantity,
+}: {
+  userId: string;
+  musicId: string;
+  quantity: number;
+}) {
+  return prisma.purchasedMusics.update({
+    where: {
+      userId_musicId: {
+        userId,
+        musicId,
+      },
+    },
+    data: {
+      quantity: {
+        decrement: quantity,
+      },
     },
   });
 }

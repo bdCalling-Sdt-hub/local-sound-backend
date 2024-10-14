@@ -20,7 +20,7 @@ export async function createAdController(
     const payment = await getLastPaymentByUserId(user.id);
 
     if (!payment)
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "No subscription found")
       );
 
@@ -62,7 +62,7 @@ export async function getAdsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.json(responseBuilder(false, 400, "Page not found"));
+      return response.status(400).json(responseBuilder(false, 400, "Page not found"));
     }
 
     const skip = (page - 1) * limit;

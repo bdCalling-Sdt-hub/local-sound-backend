@@ -4,11 +4,14 @@ import routes from "./routes";
 import responseBuilder from "./utils/responseBuilder";
 import morgan from "morgan";
 import cors from "cors";
+import streamController from "./controllers/stream";
+import { createAdmin, getAdmin } from "./services/user";
+import { hashPassword } from "./services/hash";
 
 const app = express();
 
 app.use(express.json());
-   
+
 app.use(morgan("combined"));
 app.use(cors());
 
@@ -48,7 +51,15 @@ app.get("/", (_: Request, response: Response) => {
   response.send("Local Sound");
 });
 
+app.get("/stream", streamController);
+
+getAdmin().then(async (admin) => {
+  if (!admin) {
+    createAdmin({
+      email: "admin@gmail.com",
+      password: await hashPassword("1qazxsw2"),
+    }).then(() => console.log("Admin created"));
+  }
+});
+
 export default app;
-
-
-

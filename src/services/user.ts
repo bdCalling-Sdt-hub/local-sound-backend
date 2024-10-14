@@ -127,3 +127,33 @@ export function updateBalance(id: string, amount: number) {
     },
   });
 }
+
+export function decrementBalance(id: string, amount: number) {
+  return prisma.users.update({
+    where: {
+      id,
+    },
+    data: {
+      balance: {
+        decrement: amount,
+      },
+    },
+  });
+}
+
+export function createAdmin({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  return prisma.users.create({
+    data: {
+      name: "Admin",
+      email,
+      password,
+      type: "ADMIN",
+    },
+  });
+}

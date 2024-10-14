@@ -34,10 +34,7 @@ export function getLikesByUserId({
     skip,
     include: {
       music: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
+        include: {
           user: {
             select: {
               name: true,
@@ -69,6 +66,21 @@ export function getLikeById(id: string) {
   return prisma.likes.findUnique({
     where: {
       id,
+    },
+  });
+}
+
+export function getLikeByUserIdAndMusicId({
+  userId,
+  musicId,
+}: {
+  userId: string;
+  musicId: string;
+}) {
+  return prisma.likes.findFirst({
+    where: {
+      userId,
+      musicId,
     },
   });
 }

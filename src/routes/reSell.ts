@@ -1,5 +1,9 @@
 import express from "express";
-import { onlyAdmin, onlyUser } from "../middlewares/isAllowedUser";
+import {
+  allRegisteredUser,
+  onlyAdmin,
+  onlyUser,
+} from "../middlewares/isAllowedUser";
 import isValidToken from "../middlewares/isValidToken";
 import {
   createReSellController,
@@ -13,7 +17,7 @@ router
   .route("/")
   .all(isValidToken)
   .post(onlyUser, createReSellController)
-  .get(onlyAdmin, getResellsMusicController);
+  .get(allRegisteredUser, getResellsMusicController);
 
 router
   .route("/:id")

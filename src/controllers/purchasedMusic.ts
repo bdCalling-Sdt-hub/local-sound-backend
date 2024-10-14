@@ -9,10 +9,13 @@ import chargeAmount from "../utils/chargeAmount";
 import { createTransaction } from "../services/transaction";
 import {
   countPurchasedMusics,
+  createPurchasedMusic,
   getPurchasedMusicByUserIdAndMusicId,
   getPurchasedMusicsByUserId,
 } from "../services/purchasedMusic";
 import paginationBuilder from "../utils/paginationBuilder";
+import { updateBalance } from "../services/user";
+import { updateReSellMusicQuantity } from "../services/reSell";
 
 export async function createPurchasedMusicController(
   request: Request,
@@ -21,39 +24,43 @@ export async function createPurchasedMusicController(
 ) {
   try {
     const user = request.user;
-    const { musicId, quantity, stripeToken, sellerId } =
+    const { musicId, quantity, stripeToken } =
       createPurchasedMusicValidation(request);
 
     const music = await getMusicById(musicId);
 
     if (!music) {
-      return response.status(404).json(responseBuilder(false, 404, "Music not found"));
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "Music not found"));
     }
 
-    if (sellerId) {
-      if (sellerId === user.id) {
-        return response.status(400).json(
-          responseBuilder(false, 400, "You can't buy your own music")
-        );
-      }
+    // if (sellerId) {
+      // if (sellerId === user.id) {
+      //   return response
+      //     .status(400)
+      //     .json(responseBuilder(false, 400, "You can't buy your own music"));
+      // }
 
-      const purchasedMusic = await getPurchasedMusicByUserIdAndMusicId({
-        musicId,
-        userId: sellerId,
-      });
+      // const purchasedMusic = await getPurchasedMusicByUserIdAndMusicId({
+      //   musicId,
+      //   userId: sellerId,
+      // });
 
-      if (!purchasedMusic) {
-        return response.json(
-          responseBuilder(false, 400, "Seller has not purchased this music")
-        );
-      }
+      // if (!purchasedMusic) {
+      //   return response
+      //     .status(400)
+      //     .json(
+      //       responseBuilder(false, 400, "Seller has not purchased this music")
+      //     );
+      // }
 
-      if (purchasedMusic.quantity < quantity) {
-        return response.json(
-          responseBuilder(false, 400, "Seller has not enough quantity")
-        );
-      }
-    }
+      // if (purchasedMusic.quantity < quantity) {
+      //   return response
+      //     .status(400)
+      //     .json(responseBuilder(false, 400, "Seller has not enough quantity"));
+      // }
+    // }
 
     const charge = await chargeAmount({
       stripeToken,
@@ -62,14 +69,23 @@ export async function createPurchasedMusicController(
       email: user.email,
     });
 
+    await createPurchasedMusic({
+      userId: user.id,
+      musicId,
+      quantity,
+    });
+
+    await updateBalance(music.userId, music.price * quantity);
+
+    // await updateReSellMusicQuantity(sellerId, {musicId, quantity});
+
     await createTransaction({
       amount: music.price * quantity,
       musicId,
       quantity,
       stripeTransactionId: charge.id,
       buyerId: user.id,
-      sellerId: sellerId || music.userId,
-      resell: !!sellerId,
+      sellerId:  music.userId,
     });
 
     return response.json(
@@ -100,7 +116,9 @@ export async function getPurchasedMusicsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.status(404).json(responseBuilder(false, 404, "Page not found"));
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "Page not found"));
     }
 
     const purchasedMusics = await getPurchasedMusicsByUserId({

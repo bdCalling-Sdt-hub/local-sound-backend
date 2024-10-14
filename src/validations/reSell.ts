@@ -5,52 +5,61 @@ import { isValidObjectId } from "../utils/validators";
 export function createReSellValidation(request: Request): {
   musicId: string;
   price: number;
-  quantity: number;
+  // quantity: number;
 } {
   const body = request.body;
 
-  if (!body.musicId || typeof body.musicId !== "string") {
-    throw error("Music id is required and must be a string", 400);
+  if (!body.musicId) {
+    throw error("Music id is required", 400);
+  }
+
+  if (typeof body.musicId !== "string") {
+    throw error("Music id must be a string", 400);
   }
 
   if (!isValidObjectId(body.musicId)) {
     throw error("Music id is invalid", 400);
   }
 
-  if (!body.price || typeof body.price !== "number") {
-    throw error("Price is required and must be a number", 400);
+  if (!body.price) {
+    throw error("Price is required", 400);
   }
 
-  if (!Number.isInteger(body.price)) {
+  if (typeof body.price !== "string") {
+    throw error("Price must be a string", 400);
+  }
+
+  if (!Number.isInteger(Number(body.price))) {
     throw error("Price must be an integer", 400);
   }
 
-  if (body.price < 1) {
+  if (Number(body.price) < 1) {
     throw error("Price must be greater than 0", 400);
   }
 
-  if (!body.quantity || typeof body.quantity !== "number") {
-    throw error("Quantity is required and must be a number", 400);
-  }
+  // if (!body.quantity || typeof body.quantity !== "number") {
+  //   throw error("Quantity is required and must be a number", 400);
+  // }
 
-  if (!Number.isInteger(body.quantity)) {
-    throw error("Quantity must be an integer", 400);
-  }
+  // if (!Number.isInteger(body.quantity)) {
+  //   throw error("Quantity must be an integer", 400);
+  // }
 
-  if (body.quantity < 1) {
-    throw error("Quantity must be greater than 0", 400);
-  }
+  // if (body.quantity < 1) {
+  //   throw error("Quantity must be greater than 0", 400);
+  // }
 
   return {
     musicId: body.musicId,
-    price: body.price,
-    quantity: body.quantity,
+    price: Number(body.price),
+    // quantity: body.quantity,
   };
 }
 
 export function getResellsValidation(request: Request): {
   limit: number;
   page: number;
+  name?: string;
 } {
   const query = request.query;
 
@@ -64,7 +73,11 @@ export function getResellsValidation(request: Request): {
 
   if (limit < 1) limit = 1;
 
-  return { limit, page };
+  if (query.name && typeof query.name !== "string") {
+    throw error("Name must be a string", 400);
+  }
+
+  return { limit, page, name: query.name };
 }
 
 export function updateResellPriceValidation(request: Request): {

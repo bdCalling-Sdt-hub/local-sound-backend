@@ -31,7 +31,7 @@ export async function registerController(
     const existingUser = await getUserByEmail(email);
 
     if (existingUser) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "User already exists with this email")
       );
     }
@@ -54,7 +54,7 @@ export async function registerController(
       message: `Hello ${name}, welcome to our platform`,
     });
 
-    return response.json(
+    return response.status(201).json(
       responseBuilder(true, 201, "A OTP sent to your email", user)
     );
   } catch (error) {
@@ -73,15 +73,17 @@ export async function loginController(
     const user = await getUserByEmail(email);
 
     if (!user) {
-      return response.json(
-        responseBuilder(false, 400, "User not found with this email")
-      );
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "User not found with this email"));
     }
 
     const passwordMatch = await comparePassword(password, user.password);
 
     if (!passwordMatch) {
-      return response.status(400).json(responseBuilder(false, 400, "Invalid password"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "Invalid password"));
     }
 
     if (!user.isVerified) {
@@ -91,7 +93,7 @@ export async function loginController(
         const otp = await createOtp(user.id);
         sentOtpByEmail(user.email, otp.code);
 
-        return response.json(
+        return response.status(401).json(
           responseBuilder(false, 401, "Please verify your email", {
             id: user.id,
           })
@@ -99,7 +101,7 @@ export async function loginController(
       }
 
       if (prevuesOtp.createdAt > new Date(new Date().getTime() - 120000)) {
-        return response.json(
+        return response.status(401).json(
           responseBuilder(false, 401, "Please verify your email", {
             id: user.id,
           })
@@ -109,7 +111,7 @@ export async function loginController(
       const otp = await createOtp(user.id);
       sentOtpByEmail(user.email, otp.code);
 
-      return response.json(
+      return response.status(401).json(
         responseBuilder(true, 401, "Please verify your email", { id: user.id })
       );
     }
@@ -157,19 +159,23 @@ export async function verifyOtpController(
     const user = await getUserById(userId);
 
     if (!user) {
-      return response.status(400).json(responseBuilder(false, 400, "User not found"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "User not found"));
     }
 
     const otp = await getLastOtpByUserId(userId);
 
     if (!otp) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "No OTP found for user")
       );
     }
 
     if (otp.expiredAt < new Date()) {
-      return response.status(400).json(responseBuilder(false, 400, "OTP expired"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "OTP expired"));
     }
 
     if (otp.code === code) {
@@ -213,7 +219,9 @@ export async function verifyOtpController(
       );
     }
 
-    return response.status(400).json(responseBuilder(false, 400, "Invalid OTP"));
+    return response
+      .status(400)
+      .json(responseBuilder(false, 400, "Invalid OTP"));
   } catch (error) {
     next(error);
   }
@@ -230,7 +238,9 @@ export async function resendOTPController(
     const user = await getUserById(userId);
 
     if (!user) {
-      return response.status(400).json(responseBuilder(false, 400, "User not found"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "User not found"));
     }
 
     const prevuesOtp = await getLastOtpByUserId(userId);
@@ -249,7 +259,7 @@ export async function resendOTPController(
         (prevuesOtp.createdAt.getTime() + 120000 - new Date().getTime()) / 1000
       );
 
-      return response.json(
+      return response.status(400).json(
         responseBuilder(
           false,
           400,
@@ -281,7 +291,9 @@ export async function forgotController(
     const { email } = forgotPasswordValidation(request);
     const user = await getUserByEmail(email);
     if (!user) {
-      return response.status(400).json(responseBuilder(false, 400, "User not found"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "User not found"));
     }
 
     const prevuesOtp = await getLastOtpByUserId(user.id);
@@ -294,7 +306,7 @@ export async function forgotController(
         (prevuesOtp.createdAt.getTime() + 120000 - new Date().getTime()) / 1000
       );
 
-      return response.json(
+      return response.status(400).json(
         responseBuilder(
           false,
           400,
@@ -326,7 +338,9 @@ export async function getSessionController(
     const user = await getUserById(tokenData.id);
 
     if (!user) {
-      return response.status(400).json(responseBuilder(false, 400, "User not found"));
+      return response
+        .status(400)
+        .json(responseBuilder(false, 400, "User not found"));
     }
 
     const {

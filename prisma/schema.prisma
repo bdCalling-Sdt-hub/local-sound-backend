@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -14,7 +14,7 @@ enum UserType {
 }
 
 model Users {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  id              String            @id @default(uuid())
   name            String
   email           String            @unique
   image           String?           @default("user.jpg")
@@ -41,15 +41,15 @@ model Users {
 }
 
 model Notifications {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   message   String
-  userId    String   @db.ObjectId
+  userId    String  
   user      Users    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
 model Subscriptions {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  id        String     @id @default(uuid())
   name      String
   price     Float
   duration  Int
@@ -61,8 +61,8 @@ model Subscriptions {
 }
 
 model OTPs {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
+  id        String   @id @default(uuid())
+  userId    String  
   user      Users    @relation(fields: [userId], references: [id])
   code      String
   expiredAt DateTime
@@ -70,26 +70,26 @@ model OTPs {
 }
 
 model Ads {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(uuid())
   title       String
   description String
   image       String
   venue       String
   date        String
   time        String
-  userId      String   @db.ObjectId
+  userId      String  
   user        Users    @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Payments {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String        @db.ObjectId
+  id             String        @id @default(uuid())
+  userId         String       
   user           Users         @relation(fields: [userId], references: [id])
   amount         Float
   transactionId  String
-  subscriptionId String        @db.ObjectId
+  subscriptionId String       
   expireAt       DateTime
   subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
   createdAt      DateTime      @default(now())
@@ -97,7 +97,7 @@ model Payments {
 }
 
 model AppData {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   about     String
   privacy   String
   terms     String
@@ -106,13 +106,14 @@ model AppData {
 }
 
 model Musics {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String            @db.ObjectId
+  id              String            @id @default(uuid())
+  userId          String           
   user            Users             @relation(fields: [userId], references: [id])
   name            String
   image           String
   audio           String
   price           Float
+  duration        Float
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   Likes           Likes[]
@@ -123,10 +124,10 @@ model Musics {
 }
 
 model Likes {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
+  id        String   @id @default(uuid())
+  userId    String  
   user      Users    @relation(fields: [userId], references: [id])
-  musicId   String   @db.ObjectId
+  musicId   String  
   music     Musics   @relation(fields: [musicId], references: [id])
   createdAt DateTime @default(now())
 
@@ -134,10 +135,11 @@ model Likes {
 }
 
 model PlayLists {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String           @db.ObjectId
+  id             String           @id @default(uuid())
+  userId         String          
   user           Users            @relation(fields: [userId], references: [id])
   name           String
+  image          String
   createdAt      DateTime         @default(now())
   PlayListMusics PlayListMusics[]
 
@@ -145,10 +147,10 @@ model PlayLists {
 }
 
 model PlayListMusics {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  playListId String    @db.ObjectId
+  id         String    @id @default(uuid())
+  playListId String   
   playList   PlayLists @relation(fields: [playListId], references: [id])
-  musicId    String    @db.ObjectId
+  musicId    String   
   music      Musics    @relation(fields: [musicId], references: [id])
   createdAt  DateTime  @default(now())
 
@@ -156,12 +158,12 @@ model PlayListMusics {
 }
 
 model Transactions {
-  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-  buyerId             String   @db.ObjectId
+  id                  String   @id @default(uuid())
+  buyerId             String  
   buyer               Users    @relation(fields: [buyerId], references: [id])
-  sellerId            String   @db.ObjectId
+  sellerId            String  
   amount              Float
-  musicId             String   @db.ObjectId
+  musicId             String  
   music               Musics   @relation(fields: [musicId], references: [id])
   quantity            Int
   stripeTransactionId String
@@ -170,10 +172,10 @@ model Transactions {
 }
 
 model PurchasedMusics {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  user      Users    @relation(fields: [userId], references: [id])
-  musicId   String   @db.ObjectId
+  id        String   @id @default(uuid())
+  userId    String  
+  user      Users    @relation(fields: [userId], references: [id])    
+  musicId   String  
   music     Musics   @relation(fields: [musicId], references: [id])
   quantity  Int
   createdAt DateTime @default(now())
@@ -183,10 +185,10 @@ model PurchasedMusics {
 }
 
 model ReSells {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
+  id        String   @id @default(uuid())
+  userId    String  
   user      Users    @relation(fields: [userId], references: [id])
-  musicId   String   @db.ObjectId
+  musicId   String  
   music     Musics   @relation(fields: [musicId], references: [id])
   price     Float
   quantity  Int
@@ -197,8 +199,8 @@ model ReSells {
 }
 
 // model Wallets {
-//   id          String        @id @default(auto()) @map("_id") @db.ObjectId
-//   userId      String        @unique @db.ObjectId
+//   id          String        @id @default(uuid())
+//   userId      String        @unique
 //   user        Users         @relation(fields: [userId], references: [id])
 //   balance     Float         @default(0)
 //   bankName    String?
@@ -216,8 +218,8 @@ enum WithdrawalStatus {
 }
 
 model Withdrawals {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String           @db.ObjectId
+  id          String           @id @default(uuid())
+  userId      String          
   user        Users            @relation(fields: [userId], references: [id])
   amount      Int
   bankName    String
@@ -229,7 +231,7 @@ model Withdrawals {
 }
 
 model ReviewLinks {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   name      String
   link      String
   createdAt DateTime @default(now())

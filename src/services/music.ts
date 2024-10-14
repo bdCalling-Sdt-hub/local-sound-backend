@@ -8,12 +8,14 @@ export function createMusic({
   image,
   userId,
   audio,
+  duration,
 }: {
   name: string;
   image: string;
   userId: string;
   audio: string;
   price: number;
+  duration: number;
 }) {
   return prisma.musics.create({
     data: {
@@ -21,6 +23,7 @@ export function createMusic({
       image,
       name,
       price,
+      duration,
       userId,
     },
   });
@@ -32,7 +35,6 @@ export function getMusics({
   name,
   price,
   userId,
-  url = false,
 }: {
   limit: number;
   skip: number;
@@ -50,7 +52,7 @@ export function getMusics({
       },
       userId,
     },
-    include: { user: { select: { name: true } } },   
+    include: { user: { select: { name: true } } },
     orderBy: {
       ...(name ? { price } : { createdAt: "desc" }),
     },

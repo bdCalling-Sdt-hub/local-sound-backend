@@ -15,27 +15,15 @@ export function createWithdrawal({
   bankName: string;
   userId: string;
 }) {
-  return prisma.$transaction([
-    prisma.withdrawals.create({
-      data: {
-        accountNo,
-        accountType,
-        amount,
-        bankName,
-        userId,
-      },
-    }),
-    prisma.users.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        balance: {
-          decrement: amount,
-        },
-      }
-    }),
-  ]);
+  return prisma.withdrawals.create({
+    data: {
+      accountNo,
+      accountType,
+      amount,
+      bankName,
+      userId,
+    },
+  });
 }
 
 export function getWithdrawals(limit: number, skip: number, userId?: string) {
@@ -52,9 +40,9 @@ export function getWithdrawals(limit: number, skip: number, userId?: string) {
         },
       },
     },
-    orderBy:{
+    orderBy: {
       createdAt: "desc",
-    }
+    },
   });
 }
 

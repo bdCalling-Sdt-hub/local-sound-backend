@@ -34,7 +34,7 @@ export async function createSubscriptionController(
       benefits,
     });
 
-    return response.json(
+    return response.status(201).json(
       responseBuilder(true, 201, "Subscription created", subscription)
     );
   } catch (error) {
@@ -136,19 +136,19 @@ export async function getCurrentSubscriptionController(
     const payment = await getLastPaymentByUserId(user.id);
 
     if (!payment) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "No subscription found")
       );
     }
 
     if (payment.expireAt < new Date()) {
-      return response.json(responseBuilder(false, 400, "Subscription expired"));
+      return response.status(400).json(responseBuilder(false, 400, "Subscription expired"));
     }
 
     const subscription = await getSubscriptionById(payment.subscriptionId);
 
     if (!subscription) {
-      return response.json(
+      return response.status(400).json(
         responseBuilder(false, 400, "Subscription not found")
       );
     }

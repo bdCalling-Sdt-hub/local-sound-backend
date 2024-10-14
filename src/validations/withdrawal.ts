@@ -8,14 +8,14 @@ export function createWithdrawalValidation(request: Request): {
   accountType: string;
   bankName: string;
 } {
-  const body = request.body;
+  const body = request.body;   
 
-  console.log(request.headers);
+  if (!body.amount) {
+    throw error("Amount is required", 400);
+  }
 
-  console.log(body);
-
-  if (!body.amount || typeof body.amount !== "number") {
-    throw error("Amount is required and must be a number", 400);
+  if (typeof body.amount !== "number") {
+    throw error("Amount must be a number", 400);
   }
 
   if (body.amount < 1) {
@@ -26,16 +26,28 @@ export function createWithdrawalValidation(request: Request): {
     throw error("Amount must be an integer", 400);
   }
 
-  if (!body.accountNo || typeof body.accountNo !== "string") {
-    throw error("Account number is required and must be a string", 400);
+  if (!body.accountNo) {
+    throw error("Account number is required", 400);
   }
 
-  if (!body.accountType || typeof body.accountType !== "string") {
-    throw error("Account type is required and must be a string", 400);
+  if (typeof body.accountNo !== "string") {
+    throw error("Account number must be a string", 400);
   }
 
-  if (!body.bankName || typeof body.bankName !== "string") {
-    throw error("Bank name is required and must be a string", 400);
+  if (!body.accountType) {
+    throw error("Account type is required", 400);
+  }
+
+  if (typeof body.accountType !== "string") {
+    throw error("Account type must be a string", 400);
+  }
+
+  if (!body.bankName) {
+    throw error("Bank name is required", 400);
+  }
+
+  if (typeof body.bankName !== "string") {
+    throw error("Bank name must be a string", 400);
   }
 
   return {
@@ -65,7 +77,7 @@ export function getWithdrawalsValidation(request: Request): {
   return {
     limit,
     page,
-  };    
+  };
 }
 
 export function updateWithdrawalStatusValidation(request: Request): {

@@ -17,7 +17,7 @@ export async function userNotificationsController(
       await userNotificationsValidation(request);
 
     if (tokenData.id !== userId) {
-      return response.json(
+      return response.status(403).json(
         responseBuilder(false, 403, "You are not allowed to access this data")
       );
     }
@@ -25,7 +25,7 @@ export async function userNotificationsController(
     const skip = (page - 1) * limit;
 
     const totalNotifications = await countNotifications(userId);
-
+    
     const pagination = paginationBuilder({
       currentPage: page,
       limit,
@@ -37,6 +37,7 @@ export async function userNotificationsController(
     }
     
     const notifications = await getNotificationsByUserId(userId, limit, skip);
+    
 
     return response.json(
       responseBuilder(

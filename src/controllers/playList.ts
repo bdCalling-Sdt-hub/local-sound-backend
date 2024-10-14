@@ -19,9 +19,9 @@ export async function createPlayListController(
   try {
     const user = request.user;
 
-    const { name } = createPlayListValidation(request);
+    const { name, image } = createPlayListValidation(request);
 
-    const playList = await createPlayList({ name, userId: user.id });
+    const playList = await createPlayList({ name, userId: user.id, image });
 
     return response.json(
       responseBuilder(true, 200, "PlayList created", playList)
@@ -50,7 +50,9 @@ export async function getPlayListsController(
     });
 
     if (page > pagination.totalPage) {
-      return response.status(404).json(responseBuilder(false, 404, "page not found"));
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "page not found"));
     }
 
     const skip = (page - 1) * limit;

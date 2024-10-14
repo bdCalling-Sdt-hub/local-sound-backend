@@ -10,6 +10,7 @@ import {
   deletePlayListMusicController,
   getPlayListMusicsController,
 } from "../controllers/playListMusic";
+import upload from "../utils/upload";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router
   .route("/")
   .all(isValidToken, onlyUser)
   .get(getPlayListsController)
-  .post(createPlayListController);
+  .post(upload.single("image"),createPlayListController);
 
 router
   .route("/:id")

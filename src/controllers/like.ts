@@ -11,8 +11,10 @@ import {
   getLikesByUserId,
   deleteLike,
   getLikeById,
+  getLikeByUserIdAndMusicId,
 } from "../services/like";
 import paginationBuilder from "../utils/paginationBuilder";
+import { getMusicById } from "../services/music";
 
 export async function createLikeController(
   request: Request,
@@ -24,12 +26,35 @@ export async function createLikeController(
 
     const { musicId } = createLikeValidation(request);
 
+    const music = await getMusicById(musicId);
+
+    if (!music) {
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "Music not found"));
+    }
+
+    const existingLike = await getLikeByUserIdAndMusicId({
+      userId: user.id,
+      musicId,
+    });
+
+    if (existingLike) {
+      await deleteLike(existingLike.id);
+
+      return response.json(
+        responseBuilder(true, 200, "Like deleted", { type: "unlike" })
+      );
+    }
+
     const like = await createLike({
       musicId,
       userId: user.id,
     });
 
-    return response.json(responseBuilder(true, 200, "Like created", like));
+    return response.json(
+      responseBuilder(true, 200, "Like created", { type: "like" })
+    );
   } catch (error) {
     console.error(error);
     next(error);
@@ -54,10 +79,10 @@ export async function getLikesController(
       totalData: totalLikes,
     });
 
-    if(page > pagination.totalPage) {
-      return response.json(
-        responseBuilder(false, 404, "page not found")
-      );
+    if (page > pagination.totalPage) {
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "page not found"));
     }
 
     const skip = (page - 1) * limit;
@@ -85,13 +110,17 @@ export async function deleteLikeController(
     const like = await getLikeById(id);
 
     if (!like) {
-      return response.status(404).json(responseBuilder(false, 404, "Like not found"));
+      return response
+        .status(404)
+        .json(responseBuilder(false, 404, "Like not found"));
     }
 
     if (like.userId !== user.id) {
-      return response.json(
-        responseBuilder(false, 403, "You are not allowed to delete this like")
-      );
+      return response
+        .status(403)
+        .json(
+          responseBuilder(false, 403, "You are not allowed to delete this like")
+        );
     }
 
     await deleteLike(like.id);

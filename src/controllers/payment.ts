@@ -55,7 +55,7 @@ export async function createPaymentController(
     const subscription = await getSubscriptionById(subscriptionId);
 
     if (!subscription) {
-      return response.json(
+      return response.status(404).json(
         responseBuilder(false, 404, "Subscription not found"));
     }
 

@@ -5,14 +5,17 @@ const prisma = new PrismaClient();
 export function createPlayList({
   userId,
   name,
+  image,
 }: {
   userId: string;
   name: string;
+  image: string;
 }) {
   return prisma.playLists.create({
     data: {
       userId,
       name,
+      image,
     },
   });
 }

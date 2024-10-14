@@ -3,6 +3,7 @@ import error from "../utils/error";
 
 export function createPlayListValidation(request: Request): {
   name: string;
+  image: string;
 } {
   const body = request.body;
 
@@ -10,8 +11,13 @@ export function createPlayListValidation(request: Request): {
     throw error("Name is required and must be a string", 400);
   }
 
+  if (!body.image || typeof body.image !== "string") {
+    throw error("Image is required and must be a string", 400);
+  }
+
   return {
     name: body.name,
+    image: body.image,
   };
 }
 
