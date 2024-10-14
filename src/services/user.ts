@@ -115,10 +115,16 @@ export function countUsers(type?: "USER" | "ARTIST") {
   });
 }
 
-export function updateBalance(id: string, amount: number) {
+export function updateBalance({
+  userId,
+  amount,
+}: {
+  userId: string;
+  amount: number;
+}) {
   return prisma.users.update({
     where: {
-      id,
+      id: userId,
     },
     data: {
       balance: {

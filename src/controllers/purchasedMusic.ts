@@ -24,7 +24,7 @@ export async function createPurchasedMusicController(
 ) {
   try {
     const user = request.user;
-    const { musicId, quantity, stripeToken } =
+    const { musicId, quantity, stripeToken, sellerId } =
       createPurchasedMusicValidation(request);
 
     const music = await getMusicById(musicId);
@@ -35,32 +35,32 @@ export async function createPurchasedMusicController(
         .json(responseBuilder(false, 404, "Music not found"));
     }
 
-    // if (sellerId) {
-      // if (sellerId === user.id) {
-      //   return response
-      //     .status(400)
-      //     .json(responseBuilder(false, 400, "You can't buy your own music"));
-      // }
+    if (sellerId) {
+      if (sellerId === user.id) {
+        return response
+          .status(400)
+          .json(responseBuilder(false, 400, "You can't buy your own music"));
+      }
 
-      // const purchasedMusic = await getPurchasedMusicByUserIdAndMusicId({
-      //   musicId,
-      //   userId: sellerId,
-      // });
+      const purchasedMusic = await getPurchasedMusicByUserIdAndMusicId({
+        musicId,
+        userId: sellerId,
+      });
 
-      // if (!purchasedMusic) {
-      //   return response
-      //     .status(400)
-      //     .json(
-      //       responseBuilder(false, 400, "Seller has not purchased this music")
-      //     );
-      // }
+      if (!purchasedMusic) {
+        return response
+          .status(400)
+          .json(
+            responseBuilder(false, 400, "Seller has not purchased this music")
+          );
+      }
 
-      // if (purchasedMusic.quantity < quantity) {
-      //   return response
-      //     .status(400)
-      //     .json(responseBuilder(false, 400, "Seller has not enough quantity"));
-      // }
-    // }
+      if (purchasedMusic.quantity < quantity) {
+        return response
+          .status(400)
+          .json(responseBuilder(false, 400, "Seller has not enough quantity"));
+      }
+    }
 
     const charge = await chargeAmount({
       stripeToken,
@@ -75,9 +75,13 @@ export async function createPurchasedMusicController(
       quantity,
     });
 
-    await updateBalance(music.userId, music.price * quantity);
+    await updateBalance({
+      userId: sellerId || music.userId,
+      amount: music.price * quantity,
+    });
 
-    // await updateReSellMusicQuantity(sellerId, {musicId, quantity});
+    if (sellerId)
+      await updateReSellMusicQuantity(sellerId, { musicId, quantity });
 
     await createTransaction({
       amount: music.price * quantity,
@@ -85,7 +89,7 @@ export async function createPurchasedMusicController(
       quantity,
       stripeTransactionId: charge.id,
       buyerId: user.id,
-      sellerId:  music.userId,
+      sellerId: sellerId || music.userId,
     });
 
     return response.json(

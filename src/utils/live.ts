@@ -34,6 +34,10 @@ async function streamNextMusic() {
       if (musicData.totalTake === musicData.totalMusic) {
         musicData.totalTake = 0;
         musicData.totalMusic = await countMusic({});
+        if (musicData.totalMusic === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 600000)); // 1 minute
+          return streamNextMusic();
+        }
       }
 
       musicData.musics = await getMusics({

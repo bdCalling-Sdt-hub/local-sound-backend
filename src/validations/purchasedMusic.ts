@@ -6,7 +6,7 @@ export function createPurchasedMusicValidation(request: Request): {
   musicId: string;
   quantity: number;
   stripeToken: string;
-  // sellerId?: string;
+  sellerId?: string;
 } {
   const body = request.body;
 
@@ -34,18 +34,18 @@ export function createPurchasedMusicValidation(request: Request): {
     throw error("Stripe token is required and must be a string", 400);
   }
 
-  // if (
-  //   body.sellerId &&
-  //   (typeof body.sellerId !== "string" || !isValidObjectId(body.sellerId))
-  // ) {
-  //   throw error("Seller id is invalid", 400);
-  // }
+  if (
+    body.sellerId &&
+    (typeof body.sellerId !== "string" || !isValidObjectId(body.sellerId))
+  ) {
+    throw error("Seller id is invalid", 400);
+  }
 
   return {
     musicId: body.musicId,
     quantity: body.quantity,
     stripeToken: body.stripeToken,
-    // sellerId: body.sellerId,
+    sellerId: body.sellerId,
   };
 }
 

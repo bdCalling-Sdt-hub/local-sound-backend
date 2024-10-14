@@ -42,7 +42,6 @@ export async function createWithdrawalController(
       userId: user.id,
     });
 
-    
     await decrementBalance(user.id, amount);
 
     return response.json(
@@ -120,7 +119,10 @@ export async function updateWithdrawalStatusController(
     const newWithdrawal = await updateWithdrawal(withdrawalId, status);
 
     if (newWithdrawal.status === "REJECTED")
-      await updateBalance(withdrawal.userId, withdrawal.amount);
+      await updateBalance({
+        userId: withdrawal.userId,
+        amount: withdrawal.amount,
+      });
 
     await createNotification({
       userId: withdrawal.userId,
