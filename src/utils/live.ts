@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { PassThrough } from "node:stream";
-import { countMusic, getMusics } from "../services/music";
+import { countRadioMusic, getRadioMusics } from "../services/radioMusic";
 
 type MusicData = {
   musics: {
@@ -33,18 +33,30 @@ async function streamNextMusic() {
     if (musicData.index === 0) {
       if (musicData.totalTake === musicData.totalMusic) {
         musicData.totalTake = 0;
-        musicData.totalMusic = await countMusic({});
+        musicData.totalMusic = await countRadioMusic();
         if (musicData.totalMusic === 0) {
           await new Promise((resolve) => setTimeout(resolve, 600000)); // 1 minute
           return streamNextMusic();
         }
       }
 
-      musicData.musics = await getMusics({
+      const radioMusics = await getRadioMusics({
         limit: 100,
         skip: musicData.totalTake,
-        price: "asc",
-        url: true,
+      });
+
+      musicData.musics = radioMusics.map((radioMusic) => {
+        return {
+          audio: radioMusic.music.audio,
+          image: radioMusic.music.image,
+          name: radioMusic.music.name,
+          price: radioMusic.music.price,
+          id: radioMusic.music.id,
+          duration: radioMusic.music.duration,
+          user: {
+            name: radioMusic.music.user.name,
+          },
+        };
       });
 
       musicData.totalTake += musicData.musics.length;

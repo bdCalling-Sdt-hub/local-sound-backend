@@ -43,7 +43,7 @@ model Users {
 model Notifications {
   id        String   @id @default(uuid())
   message   String
-  userId    String  
+  userId    String
   user      Users    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
@@ -62,7 +62,7 @@ model Subscriptions {
 
 model OTPs {
   id        String   @id @default(uuid())
-  userId    String  
+  userId    String
   user      Users    @relation(fields: [userId], references: [id])
   code      String
   expiredAt DateTime
@@ -77,7 +77,7 @@ model Ads {
   venue       String
   date        String
   time        String
-  userId      String  
+  userId      String
   user        Users    @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -85,11 +85,11 @@ model Ads {
 
 model Payments {
   id             String        @id @default(uuid())
-  userId         String       
+  userId         String
   user           Users         @relation(fields: [userId], references: [id])
   amount         Float
   transactionId  String
-  subscriptionId String       
+  subscriptionId String
   expireAt       DateTime
   subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
   createdAt      DateTime      @default(now())
@@ -107,7 +107,7 @@ model AppData {
 
 model Musics {
   id              String            @id @default(uuid())
-  userId          String           
+  userId          String
   user            Users             @relation(fields: [userId], references: [id])
   name            String
   image           String
@@ -121,13 +121,14 @@ model Musics {
   PurchasedMusics PurchasedMusics[]
   PlayListMusics  PlayListMusics[]
   Transactions    Transactions[]
+  RadioMusics     RadioMusics[]
 }
 
 model Likes {
   id        String   @id @default(uuid())
-  userId    String  
+  userId    String
   user      Users    @relation(fields: [userId], references: [id])
-  musicId   String  
+  musicId   String
   music     Musics   @relation(fields: [musicId], references: [id])
   createdAt DateTime @default(now())
 
@@ -136,7 +137,7 @@ model Likes {
 
 model PlayLists {
   id             String           @id @default(uuid())
-  userId         String          
+  userId         String
   user           Users            @relation(fields: [userId], references: [id])
   name           String
   image          String
@@ -148,9 +149,9 @@ model PlayLists {
 
 model PlayListMusics {
   id         String    @id @default(uuid())
-  playListId String   
+  playListId String
   playList   PlayLists @relation(fields: [playListId], references: [id])
-  musicId    String   
+  musicId    String
   music      Musics    @relation(fields: [musicId], references: [id])
   createdAt  DateTime  @default(now())
 
@@ -159,11 +160,11 @@ model PlayListMusics {
 
 model Transactions {
   id                  String   @id @default(uuid())
-  buyerId             String  
+  buyerId             String
   buyer               Users    @relation(fields: [buyerId], references: [id])
-  sellerId            String  
+  sellerId            String
   amount              Float
-  musicId             String  
+  musicId             String
   music               Musics   @relation(fields: [musicId], references: [id])
   quantity            Int
   stripeTransactionId String
@@ -173,9 +174,9 @@ model Transactions {
 
 model PurchasedMusics {
   id        String   @id @default(uuid())
-  userId    String  
-  user      Users    @relation(fields: [userId], references: [id])    
-  musicId   String  
+  userId    String
+  user      Users    @relation(fields: [userId], references: [id])
+  musicId   String
   music     Musics   @relation(fields: [musicId], references: [id])
   quantity  Int
   createdAt DateTime @default(now())
@@ -186,9 +187,9 @@ model PurchasedMusics {
 
 model ReSells {
   id        String   @id @default(uuid())
-  userId    String  
+  userId    String
   user      Users    @relation(fields: [userId], references: [id])
-  musicId   String  
+  musicId   String
   music     Musics   @relation(fields: [musicId], references: [id])
   price     Float
   quantity  Int
@@ -219,7 +220,7 @@ enum WithdrawalStatus {
 
 model Withdrawals {
   id          String           @id @default(uuid())
-  userId      String          
+  userId      String
   user        Users            @relation(fields: [userId], references: [id])
   amount      Int
   bankName    String
@@ -236,4 +237,9 @@ model ReviewLinks {
   link      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model RadioMusics {
+  musicId String @id
+  music   Musics @relation(fields: [musicId], references: [id])
 }

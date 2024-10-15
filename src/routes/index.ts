@@ -13,6 +13,7 @@ import reSellRouter from "./reSell";
 import playListRouter from "./playList";
 import withdrawalRouter from "./withdrawal";
 import appDataRouter from "./appData";
+import radioMusicRouter from "./radioMusic";
 
 const router = express.Router();
 
@@ -29,5 +30,6 @@ router.use("/re-sells", reSellRouter);
 router.use("/playlists", playListRouter);
 router.use("/withdrawals", withdrawalRouter);
 router.use("/app-data", appDataRouter);
+router.use("/radio-musics", radioMusicRouter);
 
 export default router;
